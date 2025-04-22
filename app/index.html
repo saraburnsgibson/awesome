@@ -3,16 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <title>Tiny Towns</title>
-
-  <!-- TinyTowns styles -->
-  <link rel="stylesheet" href="/tinytowns.css" /> :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
-
-  <!-- Firebase -->
+  <link rel="stylesheet" href="/tinytowns.css" />
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
-    // Load Firebase config and set up auth state handling
     fetch("/firebaseConfig.json")
       .then(res => res.json())
       .then(config => {
@@ -27,64 +22,62 @@
 
           if (user) {
             document.getElementById("user-name").textContent = user.displayName || user.email;
-            loginForm.style.display = "none";
-            userInfo.style.display  = "block";
-            appDiv.style.display     = "block";
+            if (loginForm) loginForm.style.display = "none";
+            if (userInfo) userInfo.style.display = "none";
+            appDiv.style.display = "block";
           } else {
-            loginForm.style.display = "block";
-            userInfo.style.display  = "none";
-            appDiv.style.display     = "none";
+            if (loginForm) loginForm.style.display = "block";
+            if (userInfo) userInfo.style.display = "none";
+            appDiv.style.display = "none";
           }
         });
       })
       .catch(err => console.error("Failed to load Firebase config:", err));
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#6b4b3e] text-white flex flex-col items-center justify-center min-h-screen">
+  <!-- Only show login section if user is not authenticated -->
+  <div id="login-form" class="hidden w-full max-w-sm p-6 bg-white rounded-lg shadow-lg text-black">
+    <input id="emailInput"    type="email"    placeholder="Email"    class="w-full mb-4 p-3 border rounded-lg" />
+    <input id="passwordInput" type="password" placeholder="Password" class="w-full mb-4 p-3 border rounded-lg" />
+    <button onclick="handleLogin()"       class="w-full py-3 bg-blue-500 rounded mb-2">Login</button>
+    <button onclick="handleRegister()"    class="w-full py-3 bg-green-500 rounded mb-2">Register</button>
+    <button onclick="handleGoogleLogin()" class="w-full py-3 bg-red-500 rounded">Login with Google</button>
+  </div>
 
+  <!-- React App -->
+  <div id="app" style="display: none;"></div>
+  <script type="module" src="/src/main.js"></script>
+  <script>
     function handleLogin() {
-      const auth = window.firebaseAuth;
-      const email = emailInput.value, pw = passwordInput.value;
-      auth.signInWithEmailAndPassword(email, pw).catch(e => console.error(e));
+      const email = document.getElementById("emailInput").value;
+      const pw = document.getElementById("passwordInput").value;
+      window.firebaseAuth.signInWithEmailAndPassword(email, pw)
+        .catch(e => {
+          console.error("Login error:", e.code, e.message);
+          alert("Login failed: " + e.message);
+        });
     }
 
     function handleRegister() {
-      const auth = window.firebaseAuth;
-      const email = emailInput.value, pw = passwordInput.value;
-      auth.createUserWithEmailAndPassword(email, pw).catch(e => console.error(e));
+      const email = document.getElementById("emailInput").value;
+      const pw = document.getElementById("passwordInput").value;
+      window.firebaseAuth.createUserWithEmailAndPassword(email, pw)
+        .catch(e => {
+          console.error("Register error:", e.code, e.message);
+          alert("Registration failed: " + e.message);
+        });
     }
 
     function handleGoogleLogin() {
       const provider = new firebase.auth.GoogleAuthProvider();
-      window.firebaseAuth.signInWithPopup(provider).catch(e => console.error(e));
-    }
-
-    function handleLogout() {
-      window.firebaseAuth.signOut().catch(e => console.error(e));
+      window.firebaseAuth.signInWithPopup(provider)
+        .catch(e => {
+          console.error("Google login error:", e.code, e.message);
+          alert("Google login failed: " + e.message);
+        });
     }
   </script>
-
-  <!-- Tailwind (for the login card) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
-
-  <!-- Login / User Info Card -->
-  <div class="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg text-black">
-    <div id="login-form">
-      <input id="emailInput"    type="email"    placeholder="Email"    class="w-full mb-4 p-3 border rounded-lg" />
-      <input id="passwordInput" type="password" placeholder="Password" class="w-full mb-4 p-3 border rounded-lg" />
-      <button onclick="handleLogin()"       class="w-full py-3 bg-blue-500 rounded mb-2">Login</button>
-      <button onclick="handleRegister()"    class="w-full py-3 bg-green-500 rounded mb-2">Register</button>
-      <button onclick="handleGoogleLogin()" class="w-full py-3 bg-red-500 rounded">Login with Google</button>
-    </div>
-    <div id="user-info" class="hidden text-center">
-      <p>Welcome, <span id="user-name" class="font-semibold"></span></p>
-      <button onclick="handleLogout()" class="mt-4 py-2 px-4 bg-gray-500 rounded">Logout</button>
-    </div>
-  </div>
-
-  <!-- React App Mount Point -->
-  <div id="app" style="display:none;"></div>
-
-  <!-- Your TinyTowns React bundle -->
-  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
