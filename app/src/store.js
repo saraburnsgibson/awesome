@@ -1,379 +1,257 @@
-// store.js
-import create from 'zustand';
+import create from 'zustand'
 
+// -- Helpers ---------------------------------------------------------------
 function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  const a = array.slice()
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
-  return array;
+  return a
 }
 
-const resources = ["wheat", "brick", "glass", "stone", "wood"];
-let initialDeck = [];
-resources.forEach(resource => {
-  for (let i = 0; i < 3; i++) {
-    initialDeck.push(resource);
-  }
-});
-initialDeck = shuffle(initialDeck);
+// -- Resources & Deck ------------------------------------------------------
+const resources = ['wheat', 'brick', 'glass', 'stone', 'wood']
 
+let initialDeck = []
+resources.forEach(r => {
+  for (let i = 0; i < 3; i++) initialDeck.push(r)
+})
+initialDeck = shuffle(initialDeck)
+
+// -- Color Map -------------------------------------------------------------
 export const resourceColors = {
-  wheat: "yellow",
-  brick: "red",
-  glass: "blue",
-  stone: "grey",
-  wood: "black",
-};
+  wheat: 'yellow',
+  brick: 'red',
+  glass: 'blue',
+  stone: 'grey',
+  wood: 'black',
+}
 
-// Building templates (for brevity, only "cottage" is shown fully)
+// -- Building Templates ----------------------------------------------------
+
 export const buildingTemplates = {
-    cottage: [
-      // Orientation 1
-      [
-        ["", "wheat"],
-        ["brick", "glass"]
-      ],
-      // Orientation 2
-      [
-        ["brick", ""],
-        ["glass", "wheat"]
-      ],
-      // Orientation 3
-      [
-        ["glass", "brick"],
-        ["wheat", ""]
-      ],
-      // Orientation 4
-      [
-        ["wheat", "glass"],
-        ["", "brick"]
-      ],
-      // Orientation 5
-      [
-        ["wheat", ""],
-        ["glass", "brick"]
-      ],
-      // Orientation 6
-      [
-        ["", "brick"],
-        ["wheat", "glass"]
-      ],
-      // Orientation 7
-      [
-        ["brick", "glass"],
-        ["", "wheat"]
-      ],
-      // Orientation 8
-      [
-        ["glass", "wheat"],
-        ["brick", ""]
-      ]
-    ],
-  
-    chapel: [
-      // Orientation 1
-      [
-        ["", "", "glass"],
-        ["stone", "glass", "stone"]
-      ],
-      // Orientation 2
-      [
-        ["glass", "stone"],
-        ["", "glass"],
-        ["", "stone"]
-      ],
-      // Orientation 3
-      [
-        ["stone", "glass", "stone"],
-        ["glass", "", ""]
-      ],
-      // Orientation 4
-      [
-        ["stone", ""],
-        ["glass", ""],
-        ["stone", "glass"]
-      ],
-      // Orientation 5
-      [
-        ["glass", "", ""],
-        ["stone", "glass", "stone"]
-      ],
-      // Orientation 6
-      [
-        ["stone", "glass"],
-        ["glass", ""],
-        ["stone", ""]
-      ],
-      // Orientation 7
-      [
-        ["stone", "glass", "stone"],
-        ["", "", "glass"]
-      ],
-      // Orientation 8
-      [
-        ["", "stone"],
-        ["", "glass"],
-        ["glass", "stone"]
-      ]
-    ],
-  
-    farm: [
-      // Orientation 1
-      [
-        ["wheat", "wheat"],
-        ["wood", "wood"]
-      ],
-      // Orientation 2
-      [
-        ["wood", "wheat"],
-        ["wood", "wheat"]
-      ],
-      // Orientation 3
-      [
-        ["wood", "wood"],
-        ["wheat", "wheat"]
-      ],
-      // Orientation 4
-      [
-        ["wheat", "wood"],
-        ["wheat", "wood"]
-      ]
-    ],
-  
-    tavern: [
-      // Orientation 1
-      [
-        ["brick", "brick", "glass"]
-      ],
-      // Orientation 2
-      [
-        ["brick"],
-        ["brick"],
-        ["glass"]
-      ],
-      // Orientation 3
-      [
-        ["glass", "brick", "brick"],
-      ],
-      // Orientation 4
-      [
-        ["glass"],
-        ["brick"],
-        ["brick"]
-      ]
-    ],
-  
-    well: [
-      // Orientation 1
-      [
-        ["wood", "stone"]
-      ],
-      // Orientation 2
-      [
-        ["wood"],
-        ["stone"]
-      ],
-      // Orientation 3
-      [
-        ["stone", "wood"],
-      ],
-      // Orientation 4
-      [
-        ["stone"],
-        ["wood"]
-      ]
-    ],
-  
-    theater: [
-      // Orientation 1 (Original)
-      [
-        ["", "stone", ""],
-        ["wood", "glass", "wood"]
-      ],
-      // Orientation 2 (90° Clockwise Rotation)
-      [
-        ["wood", ""],
-        ["glass", "stone"],
-        ["wood", ""]
-      ],
-      // Orientation 3 (180° Rotation)
-      [
-        ["wood", "glass", "wood"],
-        ["", "stone", ""]
-      ],
-      // Orientation 4 (270° Clockwise Rotation)
-      [
-        ["", "wood"],
-        ["stone", "glass"],
-        ["", "wood"]
-      ]
-    ],
-  
-    factory: [
-      // Orientation 1 (Original)
-      [
-        ["wood", "", "", ""],
-        ["brick", "stone", "stone", "brick"]
-      ],
-      // Orientation 2 (90° Clockwise Rotation)
-      [
-        ["brick", "wood"],
-        ["stone", ""],
-        ["stone", ""],
-        ["brick", ""]
-      ],
-      // Orientation 3 (180° Rotation)
-      [
-        ["brick", "stone", "stone", "brick"],
-        ["", "", "", "wood"]
-      ],
-      // Orientation 4 (270° Clockwise Rotation)
-      [
-        ["", "brick"],
-        ["", "stone"],
-        ["", "stone"],
-        ["wood", "brick"]
-      ],
-      // Orientation 5
-      [
-        ["", "", "", "wood"],
-        ["brick", "stone", "stone", "brick"]
-      ],
-      // Orientation 6
-      [
-        ["wood", "brick"],
-        ["", "stone"],
-        ["", "stone"],
-        ["", "brick"]
-      ],
-      // Orientation 7
-      [
-        ["brick", "stone", "stone", "brick"],
-        ["wood", "", "", ""]
-      ],
-      // Orientation 8
-      [
-        ["brick", ""],
-        ["stone", ""],
-        ["stone", ""],
-        ["brick", "wood"]
-      ]
-    ],
-  
-    cathedral: [
-      // Orientation 1 (Original)
-      [
-        ["", "wheat"],
-        ["stone", "glass"]
-      ],
-      // Orientation 2 (90° Clockwise Rotation)
-      [
-        ["stone", ""],
-        ["glass", "wheat"]
-      ],
-      // Orientation 3 (180° Rotation)
-      [
-        ["glass", "stone"],
-        ["wheat", ""]
-      ],
-      // Orientation 4 (270° Clockwise Rotation)
-      [
-        ["wheat", "glass"],
-        ["", "stone"]
-      ],
-      // Orientation 5
-      [
-        ["wheat", ""],
-        ["glass", "stone"]
-      ],
-      // Orientation 6
-      [
-        ["", "stone"],
-        ["wheat", "glass"]
-      ],
-      // Orientation 7
-      [
-        ["stone", "glass"],
-        ["", "wheat"]
-      ],
-      // Orientation 8
-      [
-        ["glass", "wheat"],
-        ["stone", ""]
-      ]
-    ]
-  };
+  cottage: [
+    [['', 'wheat'], ['brick', 'glass']],
+    [['brick', ''], ['glass', 'wheat']],
+    [['glass', 'brick'], ['wheat', '']],
+    [['wheat', 'glass'], ['', 'brick']],
+    [['wheat', ''], ['glass', 'brick']],
+    [['', 'brick'], ['wheat', 'glass']],
+    [['brick', 'glass'], ['', 'wheat']],
+    [['glass', 'wheat'], ['brick', '']],
+  ],
+  chapel: [
+    [['', '', 'glass'], ['stone', 'glass', 'stone']],
+    [['glass', 'stone'], ['', 'glass'], ['', 'stone']],
+    [['stone', 'glass', 'stone'], ['glass', '', '']],
+    [['stone', ''], ['glass', ''], ['stone', 'glass']],
+    [['glass', '', ''], ['stone', 'glass', 'stone']],
+    [['stone', 'glass'], ['glass', ''], ['stone', '']],
+    [['stone', 'glass', 'stone'], ['', '', 'glass']],
+    [['', 'stone'], ['', 'glass'], ['glass', 'stone']],
+  ],
+  farm: [
+    [['wheat', 'wheat'], ['wood', 'wood']],
+    [['wood', 'wheat'], ['wood', 'wheat']],
+    [['wood', 'wood'], ['wheat', 'wheat']],
+    [['wheat', 'wood'], ['wheat', 'wood']],
+  ],
+  tavern: [
+    [['brick', 'brick', 'glass']],
+    [['brick'], ['brick'], ['glass']],
+    [['glass', 'brick', 'brick']],
+    [['glass'], ['brick'], ['brick']],
+  ],
+  well: [
+    [['wood', 'stone']],
+    [['wood'], ['stone']],
+    [['stone', 'wood']],
+    [['stone'], ['wood']],
+  ],
+  theater: [
+    [['', 'stone', ''], ['wood', 'glass', 'wood']],
+    [['wood', ''], ['glass', 'stone'], ['wood', '']],
+    [['wood', 'glass', 'wood'], ['', 'stone', '']],
+    [['', 'wood'], ['stone', 'glass'], ['', 'wood']],
+  ],
+  factory: [
+    [['wood', '', '', ''], ['brick', 'stone', 'stone', 'brick']],
+    [['brick', 'wood'], ['stone', ''], ['stone', ''], ['brick', '']],
+    [['brick', 'stone', 'stone', 'brick'], ['', '', '', 'wood']],
+    [['', 'brick'], ['', 'stone'], ['', 'stone'], ['wood', 'brick']],
+    [['', '', '', 'wood'], ['brick', 'stone', 'stone', 'brick']],
+    [['wood', 'brick'], ['', 'stone'], ['', 'stone'], ['', 'brick']],
+    [['brick', 'stone', 'stone', 'brick'], ['wood', '', '', '']],
+    [['brick', ''], ['stone', ''], ['stone', ''], ['brick', 'wood']],
+  ],
+  cathedral: [
+    [['', 'wheat'], ['stone', 'glass']],
+    [['stone', ''], ['glass', 'wheat']],
+    [['glass', 'stone'], ['wheat', '']],
+    [['wheat', 'glass'], ['', 'stone']],
+    [['wheat', ''], ['glass', 'stone']],
+    [['', 'stone'], ['wheat', 'glass']],
+    [['stone', 'glass'], ['', 'wheat']],
+    [['glass', 'wheat'], ['stone', '']],
+  ],
+}
 
-export const useTownStore = create((set) => ({
-  grid: Array(16).fill(null), // 4x4 grid; cells with resource or building name
-  deck: initialDeck,
+// -- Zustand Store ---------------------------------------------------------
+export const useTownStore = create((set, get) => ({
+  grid: Array(16).fill(null).map(() => ({ resource: null, selected: false, topLeft: false })),
+  deck: shuffle(initialDeck),
   selectedResource: null,
-  selectedGrid: [], // indices of grid cells toggled (only if cell has a resource)
-  selectedBuilding: null, // { building, orientation }
+  selectedGrid: [],
+  selectedBuilding: null,
 
-  // For resource selection (from deck)
   setSelectedResource: (resource, deckIndex) =>
     set({ selectedResource: { resource, deckIndex } }),
 
-  placeResource: (gridIndex) =>
-    set((state) => {
-      if (state.grid[gridIndex] !== null || !state.selectedResource)
-        return state;
-      const newGrid = [...state.grid];
-      newGrid[gridIndex] = state.selectedResource.resource;
-      const newDeck = [...state.deck];
-      newDeck.splice(state.selectedResource.deckIndex, 1);
-      newDeck.push(state.selectedResource.resource);
-      return { grid: newGrid, deck: newDeck, selectedResource: null };
+  placeResource: gridIndex =>
+    set(state => {
+      const { grid, deck, selectedResource } = state
+      if (!selectedResource || grid[gridIndex].resource) return {}
+
+      const newGrid = grid.map((cell, idx) =>
+        idx === gridIndex
+          ? { resource: selectedResource.resource, selected: false, topLeft: false }
+          : cell
+      )
+
+      const newDeck = deck.slice()
+      newDeck.splice(selectedResource.deckIndex, 1)
+
+      return {
+        grid: newGrid,
+        deck: shuffle(newDeck),
+        selectedResource: null,
+        selectedGrid: [],
+        selectedBuilding: null,
+      }
     }),
 
-  resetGrid: () => set({ grid: Array(16).fill(null), selectedGrid: [], selectedBuilding: null }),
+  toggleCell: index =>
+    set(state => {
+      const grid = [...state.grid]
+      const cell = grid[index]
+      if (!cell.resource) return {}
 
-  // Toggle selection on grid cells with a resource
-  toggleGridCell: (index) =>
-    set((state) => {
-      const cellValue = state.grid[index];
-      if (!resources.includes(cellValue)) return state;
-      const selectedSet = new Set(state.selectedGrid);
-      if (selectedSet.has(index)) selectedSet.delete(index);
-      else selectedSet.add(index);
-      return { selectedGrid: Array.from(selectedSet) };
+      const selectedGrid = state.selectedGrid.includes(index)
+        ? state.selectedGrid.filter(i => i !== index)
+        : [...state.selectedGrid, index]
+
+      grid[index] = {
+        ...cell,
+        selected: !cell.selected,
+      }
+
+      return { grid, selectedGrid, selectedBuilding: null }
     }),
 
   selectBuilding: (building, orientation) =>
     set({ selectedBuilding: { building, orientation } }),
 
-  clearSelections: () => set({ selectedGrid: [], selectedBuilding: null }),
+  clearSelections: () =>
+    set(state => {
+      const newGrid = state.grid.map(cell =>
+        cell.selected ? { ...cell, selected: false } : cell
+      )
+      return {
+        grid: newGrid,
+        selectedGrid: [],
+        selectedBuilding: null,
+      }
+    }),
 
-  // Place building onto grid at chosen top-left empty cell.
-  // For each non-empty cell in the template, the corresponding grid cell must be empty.
-  placeBuilding: (topLeftIndex, building, orientation) =>
-    set((state) => {
-      const row = Math.floor(topLeftIndex / 4);
-      const col = topLeftIndex % 4;
+    placeBuilding: (clickedIndex) => {
+      const state = get();
+      const { selectedBuilding, grid, selectedGrid } = state;
+      if (!selectedBuilding || !selectedGrid.includes(clickedIndex)) return;
+    
+      const { building, orientation } = selectedBuilding;
       const template = buildingTemplates[building][orientation];
-      const templateRows = template.length;
-      const templateCols = template[0].length;
-      if (row + templateRows > 4 || col + templateCols > 4) return state;
-      const newGrid = [...state.grid];
-      for (let i = 0; i < templateRows; i++) {
-        for (let j = 0; j < templateCols; j++) {
-          if (template[i][j] !== "") {
-            const idx = (row + i) * 4 + (col + j);
-            if (newGrid[idx] !== null) return state;
+      const templateCells = [];
+    
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[0].length; j++) {
+          if (template[i][j] !== '') {
+            templateCells.push({ i, j });
           }
         }
       }
-      // Place building: mark each relevant cell with building name.
-      for (let i = 0; i < templateRows; i++) {
-        for (let j = 0; j < templateCols; j++) {
-          if (template[i][j] !== "") {
-            const idx = (row + i) * 4 + (col + j);
-            newGrid[idx] = building;
+    
+      const clickedRow = Math.floor(clickedIndex / 4);
+      const clickedCol = clickedIndex % 4;
+    
+      for (const { i: anchorI, j: anchorJ } of templateCells) {
+        const startRow = clickedRow - anchorI;
+        const startCol = clickedCol - anchorJ;
+    
+        if (startRow < 0 || startCol < 0 || startRow + template.length > 4 || startCol + template[0].length > 4)
+          continue;
+    
+        let match = true;
+        for (let i = 0; i < template.length && match; i++) {
+          for (let j = 0; j < template[0].length && match; j++) {
+            const val = template[i][j];
+            if (val !== '') {
+              const gridIndex = (startRow + i) * 4 + (startCol + j);
+              if (!selectedGrid.includes(gridIndex)) match = false;
+              else if (grid[gridIndex].resource !== val) match = false;
+            }
           }
         }
+    
+        if (!match) continue;
+    
+        const newGrid = grid.map(cell => ({
+          ...cell,
+          selected: false,
+          topLeft: false,
+        }));
+    
+        for (let i = 0; i < template.length; i++) {
+          for (let j = 0; j < template[0].length; j++) {
+            const val = template[i][j];
+            if (val !== '') {
+              const gridIndex = (startRow + i) * 4 + (startCol + j);
+    
+              if (gridIndex === clickedIndex) {
+                // Place building only on clicked cell
+                newGrid[gridIndex] = {
+                  resource: building,
+                  selected: false,
+                  topLeft: true,
+                };
+              } else {
+                // Clear all other cells in the pattern
+                newGrid[gridIndex] = {
+                  resource: null,
+                  selected: false,
+                  topLeft: false,
+                };
+              }
+            }
+          }
+        }
+    
+        set({
+          grid: newGrid,
+          selectedGrid: [],
+          selectedBuilding: null,
+        });
+        return;
       }
-      return { grid: newGrid, selectedBuilding: null, selectedGrid: [] };
-    })
-}));
+    },
+    
+
+  resetGrid: () =>
+    set({
+      grid: Array(16).fill(null).map(() => ({ resource: null, selected: false, topLeft: false })),
+      deck: shuffle(initialDeck),
+      selectedResource: null,
+      selectedGrid: [],
+      selectedBuilding: null,
+    }),
+}))

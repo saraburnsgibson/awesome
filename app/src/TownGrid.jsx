@@ -1,36 +1,44 @@
-// TownGrid.jsx
 import React from 'react';
-import { useTownStore, resourceColors } from './store';
+import { useTownStore } from './store';
 
 export function TownGrid() {
-  const { grid, placeResource, resetGrid } = useTownStore((state) => ({
+  const {
+    grid,
+    placeResource,
+    toggleCell,
+    selectedBuilding,
+    placeBuilding
+  } = useTownStore(state => ({
     grid: state.grid,
     placeResource: state.placeResource,
-    resetGrid: state.resetGrid,
+    toggleCell: state.toggleCell,
+    selectedBuilding: state.selectedBuilding,
+    placeBuilding: state.placeBuilding,
   }));
 
-  const handleTileClick = (index) => {
-    placeResource(index);
-  };
-
   return (
-    <div className="text-center">
-      <h1 className="text-3xl font-bold mb-4">Tinytowns Board</h1>
-      <div className="grid grid-cols-4 gap-2">
-        {grid.map((tile, index) => (
-          <button
-            key={index}
-            onClick={() => handleTileClick(index)}
-            className="w-16 h-16"
-            style={ tile ? { backgroundColor: resourceColors[tile] } : { backgroundColor: "lightgray" } }
-          >
-            {tile ? "" : ""}
-          </button>
-        ))}
-      </div>
-      <button onClick={resetGrid} className="mt-4 bg-red-500 px-4 py-2 rounded">
-        Reset Grid
-      </button>
+    <div className="grid">
+      {grid.map((cell, idx) => (
+        <div
+          key={idx}
+          className={`cell${cell?.selected ? ' selected' : ''}`}
+          onClick={() => {
+            if (selectedBuilding) {
+              placeBuilding(idx);
+            } else {
+              cell.resource ? toggleCell(idx) : placeResource(idx);
+            }
+          }}
+        >
+          {cell.resource && (
+            <div className={`resource-square-card ${cell.resource}`} />
+          )}
+
+          {cell.topLeft && (
+            <div className={`circle ${cell.resource}-circle`} />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
