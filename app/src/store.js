@@ -29,7 +29,6 @@ export const resourceColors = {
 }
 
 // -- Building Templates ----------------------------------------------------
-
 export const buildingTemplates = {
   cottage: [
     [['', 'wheat'], ['brick', 'glass']],
@@ -104,6 +103,8 @@ export const useTownStore = create((set, get) => ({
   selectedResource: null,
   selectedGrid: [],
   selectedBuilding: null,
+  startTime: new Date().toISOString(),
+  endTime: null,
 
   setSelectedResource: (resource, deckIndex) =>
     set({ selectedResource: { resource, deckIndex } }),
@@ -112,16 +113,13 @@ export const useTownStore = create((set, get) => ({
     set(state => {
       const { grid, deck, selectedResource } = state
       if (!selectedResource || grid[gridIndex].resource) return {}
-
       const newGrid = grid.map((cell, idx) =>
         idx === gridIndex
           ? { resource: selectedResource.resource, selected: false, topLeft: false }
           : cell
       )
-
       const newDeck = deck.slice()
       newDeck.splice(selectedResource.deckIndex, 1)
-
       return {
         grid: newGrid,
         deck: shuffle(newDeck),
@@ -136,16 +134,10 @@ export const useTownStore = create((set, get) => ({
       const grid = [...state.grid]
       const cell = grid[index]
       if (!cell.resource) return {}
-
       const selectedGrid = state.selectedGrid.includes(index)
         ? state.selectedGrid.filter(i => i !== index)
         : [...state.selectedGrid, index]
-
-      grid[index] = {
-        ...cell,
-        selected: !cell.selected,
-      }
-
+      grid[index] = { ...cell, selected: !cell.selected }
       return { grid, selectedGrid, selectedBuilding: null }
     }),
 
@@ -157,94 +149,64 @@ export const useTownStore = create((set, get) => ({
       const newGrid = state.grid.map(cell =>
         cell.selected ? { ...cell, selected: false } : cell
       )
-      return {
-        grid: newGrid,
-        selectedGrid: [],
-        selectedBuilding: null,
-      }
+      return { grid: newGrid, selectedGrid: [], selectedBuilding: null }
     }),
 
-    placeBuilding: (clickedIndex) => {
-      const state = get();
-      const { selectedBuilding, grid, selectedGrid } = state;
-      if (!selectedBuilding || !selectedGrid.includes(clickedIndex)) return;
-    
-      const { building, orientation } = selectedBuilding;
-      const template = buildingTemplates[building][orientation];
-      const templateCells = [];
-    
+  // Re-added placeBuilding logic:
+  placeBuilding: clickedIndex => {
+    const state = get()
+    const { selectedBuilding, grid, selectedGrid } = state
+    if (!selectedBuilding || !selectedGrid.includes(clickedIndex)) return
+
+    const { building, orientation } = selectedBuilding
+    const template = buildingTemplates[building][orientation]
+    const templateCells = []
+    for (let i = 0; i < template.length; i++) {
+      for (let j = 0; j < template[0].length; j++) {
+        if (template[i][j] !== '') templateCells.push({ i, j })
+      }
+    }
+    const clickedRow = Math.floor(clickedIndex / 4)
+    const clickedCol = clickedIndex % 4
+    for (const { i: anchorI, j: anchorJ } of templateCells) {
+      const startRow = clickedRow - anchorI
+      const startCol = clickedCol - anchorJ
+      if (
+        startRow < 0 ||
+        startCol < 0 ||
+        startRow + template.length > 4 ||
+        startCol + template[0].length > 4
+      ) continue
+      let match = true
+      for (let i = 0; i < template.length && match; i++) {
+        for (let j = 0; j < template[0].length && match; j++) {
+          const val = template[i][j]
+          const idx = (startRow + i) * 4 + (startCol + j)
+          if (val !== '' && (!selectedGrid.includes(idx) || grid[idx].resource !== val)) {
+            match = false
+          }
+        }
+      }
+      if (!match) continue
+
+      const newGrid = grid.map(cell => ({ ...cell, selected: false, topLeft: false }))
       for (let i = 0; i < template.length; i++) {
         for (let j = 0; j < template[0].length; j++) {
-          if (template[i][j] !== '') {
-            templateCells.push({ i, j });
+          const val = template[i][j]
+          const idx = (startRow + i) * 4 + (startCol + j)
+          if (val !== '') {
+            newGrid[idx] = idx === clickedIndex
+              ? { resource: building, selected: false, topLeft: true }
+              : { resource: null, selected: false, topLeft: false }
           }
         }
       }
-    
-      const clickedRow = Math.floor(clickedIndex / 4);
-      const clickedCol = clickedIndex % 4;
-    
-      for (const { i: anchorI, j: anchorJ } of templateCells) {
-        const startRow = clickedRow - anchorI;
-        const startCol = clickedCol - anchorJ;
-    
-        if (startRow < 0 || startCol < 0 || startRow + template.length > 4 || startCol + template[0].length > 4)
-          continue;
-    
-        let match = true;
-        for (let i = 0; i < template.length && match; i++) {
-          for (let j = 0; j < template[0].length && match; j++) {
-            const val = template[i][j];
-            if (val !== '') {
-              const gridIndex = (startRow + i) * 4 + (startCol + j);
-              if (!selectedGrid.includes(gridIndex)) match = false;
-              else if (grid[gridIndex].resource !== val) match = false;
-            }
-          }
-        }
-    
-        if (!match) continue;
-    
-        const newGrid = grid.map(cell => ({
-          ...cell,
-          selected: false,
-          topLeft: false,
-        }));
-    
-        for (let i = 0; i < template.length; i++) {
-          for (let j = 0; j < template[0].length; j++) {
-            const val = template[i][j];
-            if (val !== '') {
-              const gridIndex = (startRow + i) * 4 + (startCol + j);
-    
-              if (gridIndex === clickedIndex) {
-                // Place building only on clicked cell
-                newGrid[gridIndex] = {
-                  resource: building,
-                  selected: false,
-                  topLeft: true,
-                };
-              } else {
-                // Clear all other cells in the pattern
-                newGrid[gridIndex] = {
-                  resource: null,
-                  selected: false,
-                  topLeft: false,
-                };
-              }
-            }
-          }
-        }
-    
-        set({
-          grid: newGrid,
-          selectedGrid: [],
-          selectedBuilding: null,
-        });
-        return;
-      }
-    },
-    
+      set({ grid: newGrid, selectedGrid: [], selectedBuilding: null })
+      return
+    }
+  },
+
+  setEndTime: () => set({ endTime: new Date().toISOString() }),
 
   resetGrid: () =>
     set({
@@ -253,5 +215,7 @@ export const useTownStore = create((set, get) => ({
       selectedResource: null,
       selectedGrid: [],
       selectedBuilding: null,
+      startTime: new Date().toISOString(),
+      endTime: null,
     }),
 }))

@@ -12,16 +12,24 @@ export default ({ mode }) => {
           target: env.VITE_BACKEND_URL,
           changeOrigin: true,
         },
+        watch: {
+          usePolling: true,
+        },
       },
-      watch: {
-        usePolling: true,
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          main: 'index.html', // your main game
+          end: 'end.html',     // your end screen
+        },
       },
     },
     test: {
       globals: true,
       environment: 'jsdom',
       coverage: {
-        reporter: ['text', 'html'], 
+        reporter: ['text', 'html'],
         reportsDirectory: './coverage',
         exclude: [
           'eslint.config.*',
@@ -31,9 +39,9 @@ export default ({ mode }) => {
           'tests/',
           '**/*.test.*',
           'coverage/',
-          'dist/'
+          'dist/',
         ],
       },
     },
   });
-};
+}  
