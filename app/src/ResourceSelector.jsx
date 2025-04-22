@@ -1,28 +1,27 @@
 import React from 'react';
-import { useTownStore, resourceColors } from './store';
+import { useTownStore } from './store';
 
 export function ResourceSelector() {
-  const { deck, selectedResource, setSelectedResource } = useTownStore((state) => ({
+  const { deck, selectedResource, setSelectedResource } = useTownStore(state => ({
     deck: state.deck,
     selectedResource: state.selectedResource,
     setSelectedResource: state.setSelectedResource,
   }));
 
-  // Only show the top three cards.
-  const visibleCards = deck.slice(0, 3);
-
   return (
-    <div className="flex justify-center mb-4">
-      {visibleCards.map((resource, index) => (
-        <button
-          key={index}
-          onClick={() => setSelectedResource(resource, index)}
-          className={`px-3 py-2 m-1 ${selectedResource && selectedResource.deckIndex === index ? 'border-4' : 'border-2'}`}
-          style={{ backgroundColor: "lightgray", border: `2px solid ${resourceColors[resource]}` }}
+    <div className="flex gap-4 justify-center items-center">
+      {deck.slice(0, 3).map((res, i) => (
+        <div
+          key={i}
+          className={`building-card ${selectedResource?.deckIndex === i ? 'selected' : ''}`}
+          onClick={() => setSelectedResource(res, i)}
         >
-          {resource}
-        </button>
+          <div className="resource-shape-container">
+            <div className={`resource-square-card ${res}`} />
+          </div>
+        </div>
       ))}
     </div>
   );
 }
+
