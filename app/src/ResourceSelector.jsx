@@ -2,15 +2,15 @@ import React from 'react';
 import { useTownStore } from './store';
 
 export function ResourceSelector() {
-  const { deck, selectedResource, setSelectedResource } = useTownStore(state => ({
-    deck: state.deck,
+  const { visibleCards, selectedResource, setSelectedResource } = useTownStore(state => ({
+    visibleCards: state.visibleCards,
     selectedResource: state.selectedResource,
     setSelectedResource: state.setSelectedResource,
   }));
 
   return (
     <div className="flex gap-4 justify-center items-center">
-      {deck.slice(0, 3).map((res, i) => (
+      {visibleCards.map((res, i) => (
         <div
           key={i}
           className={`building-card ${selectedResource?.deckIndex === i ? 'selected' : ''}`}
@@ -24,4 +24,3 @@ export function ResourceSelector() {
     </div>
   );
 }
-
