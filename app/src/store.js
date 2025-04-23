@@ -221,11 +221,9 @@ export const useTownStore = create((set, get) => ({
           const val = template[i][j];
           const idx = (startRow + i) * 4 + (startCol + j);
           if (val !== '') {
-            newGrid[idx] = {
-              resource: building,
-              selected: false,
-              topLeft: idx === clickedIndex
-            };
+            newGrid[idx] = idx === clickedIndex
+          ? { resource: building, selected: false, topLeft: true }
+          : { resource: null, selected: false, topLeft: false };
           }
         }
       }
