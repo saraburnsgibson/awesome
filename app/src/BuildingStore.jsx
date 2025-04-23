@@ -36,6 +36,16 @@ function matchTemplate(selectedGrid, grid, template) {
   return JSON.stringify(sortedSel) === JSON.stringify(sortedTemp);
 }
 
+function getCircleColor(buildingName) {
+  const tempEl = document.createElement("div");
+  tempEl.className = `${buildingName}-circle circle`;
+  document.body.appendChild(tempEl);
+
+  const color = getComputedStyle(tempEl).getPropertyValue('--circle-color');
+  document.body.removeChild(tempEl);
+  return color.trim();
+}
+
 function ResourceGrid({ pattern }) {
   return (
     <div className="inline-block bg-transparent p-1">
@@ -103,7 +113,13 @@ export function BuildingStore() {
             }}
             className={`cursor-pointer border-2 rounded-md p-2 w-28 bg-[#D2B48C] text-center relative ${isEligible ? 'border-green-500' : 'border-gray-400'} ${isSelected ? 'ring-2 ring-red-500' : ''}`}
           >
-            <div className="text-white font-bold capitalize mb-1">{buildingName}</div>
+            <div className="flex justify-between items-center mb-1">
+              <div className="text-white font-bold capitalize text-left">{buildingName}</div>
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: getCircleColor(buildingName) }}
+              />
+            </div>
             <ResourceGrid pattern={buildingTemplates[buildingName][0]} />
           </div>
         );
