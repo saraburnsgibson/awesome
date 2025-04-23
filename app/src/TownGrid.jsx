@@ -30,10 +30,9 @@ export function TownGrid() {
             }
           }}
         >
-          {cell.resource && (
+          {cell.resource && !cell.topLeft && ['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource) && (
             <div className={`resource-square-card ${cell.resource}`} />
           )}
-
           {cell.topLeft && (
             <div className={`circle ${cell.resource}-circle`} />
           )}

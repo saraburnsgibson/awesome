@@ -209,18 +209,27 @@ export const useTownStore = create((set, get) => ({
 
       if (!match) continue;
 
-      const newGrid = grid.map(cell => ({ ...cell, selected: false, topLeft: false }));
+      const newGrid = grid.map((cell, idx) => {
+        if (selectedGrid.includes(idx)) {
+          return { resource: null, selected: false, topLeft: false };
+        }
+        return { ...cell, selected: false };
+      });
+      
       for (let i = 0; i < template.length; i++) {
         for (let j = 0; j < template[0].length; j++) {
           const val = template[i][j];
           const idx = (startRow + i) * 4 + (startCol + j);
           if (val !== '') {
-            newGrid[idx] = idx === clickedIndex
-              ? { resource: building, selected: false, topLeft: true }
-              : { resource: null, selected: false, topLeft: false };
+            newGrid[idx] = {
+              resource: building,
+              selected: false,
+              topLeft: idx === clickedIndex
+            };
           }
         }
       }
+      
 
       set({
         grid: newGrid,
