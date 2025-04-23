@@ -17,17 +17,21 @@
 
         auth.onAuthStateChanged(user => {
           const loginForm = document.getElementById("login-form");
-          const userInfo  = document.getElementById("user-info");
           const appDiv    = document.getElementById("app");
 
           if (user) {
-            document.getElementById("user-name").textContent = user.displayName || user.email;
             if (loginForm) loginForm.style.display = "none";
-            if (userInfo) userInfo.style.display = "none";
             appDiv.style.display = "block";
+
+            // ✅ Mount React app *after* login
+            if (!window.reactMounted) {
+              import("/src/main.js").then(module => {
+                window.reactMounted = true;
+              });
+            }
+
           } else {
             if (loginForm) loginForm.style.display = "block";
-            if (userInfo) userInfo.style.display = "none";
             appDiv.style.display = "none";
           }
         });
@@ -37,8 +41,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#6b4b3e] text-white flex flex-col items-center justify-center min-h-screen">
-  <!-- Only show login section if user is not authenticated -->
-  <div id="login-form" class="hidden w-full max-w-sm p-6 bg-white rounded-lg shadow-lg text-black">
+  <!-- Login Form (shown by default) -->
+  <div id="login-form" class="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg text-black">
     <input id="emailInput"    type="email"    placeholder="Email"    class="w-full mb-4 p-3 border rounded-lg" />
     <input id="passwordInput" type="password" placeholder="Password" class="w-full mb-4 p-3 border rounded-lg" />
     <button onclick="handleLogin()"       class="w-full py-3 bg-blue-500 rounded mb-2">Login</button>
@@ -46,9 +50,10 @@
     <button onclick="handleGoogleLogin()" class="w-full py-3 bg-red-500 rounded">Login with Google</button>
   </div>
 
-  <!-- React App -->
+  <!-- React App (hidden until login) -->
   <div id="app" style="display: none;"></div>
-  <script type="module" src="/src/main.js"></script>
+
+  <!-- Auth Handlers -->
   <script>
     function handleLogin() {
       const email = document.getElementById("emailInput").value;
