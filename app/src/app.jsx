@@ -5,6 +5,7 @@ import { TownGrid } from './TownGrid';
 import { ResourceSelector } from './ResourceSelector';
 import { useTownStore } from './store';
 import { calculateScore } from './scoring';
+import { detectAchievements } from './achievements';
 
 export function App() {
   const grid = useTownStore(state => state.grid);
@@ -70,17 +71,22 @@ export function App() {
                 Restart Game
               </button>
               <button
-                onClick={() => {
-                  const grid = useTownStore.getState().grid;
-                  const score = calculateScore(grid);
-                  localStorage.setItem('finalGrid', JSON.stringify(grid));
-                  localStorage.setItem('startTime', startTime);
-                  localStorage.setItem('score', score);
-                  const currentEnd = new Date().toISOString();
-                  localStorage.setItem('endTime', currentEnd);
-                  setEndTime();
-                  window.location.href = '/end.html';
-                }}
+                  onClick={() => {
+                    const grid = useTownStore.getState().grid;
+                    const score = calculateScore(grid);
+                    const startTime = useTownStore.getState().startTime;
+                    const currentEnd = new Date().toISOString();
+                    const achievements = detectAchievements(grid, startTime, currentEnd, score);
+                
+                    localStorage.setItem('finalGrid', JSON.stringify(grid));
+                    localStorage.setItem('startTime', startTime);
+                    localStorage.setItem('endTime', currentEnd);
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('achievements', JSON.stringify(achievements));
+                    
+                    useTownStore.getState().setEndTime();
+                    window.location.href = '/end.html';
+                  }}
                 className="flex-1 bg-[#a83232] text-[#fdf4e3] py-2 rounded-md font-semibold"
               >
                 End Game
