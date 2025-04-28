@@ -18,7 +18,7 @@ export function checkWinner(board) {
 }
 
 
-export async function saveGame(board, winner, idToken) {
+export async function saveGame(grid, score, skillLevel, idToken) {
   await fetch("http://localhost:3000/save-game", {
     method: "POST",
     headers: {
@@ -26,10 +26,10 @@ export async function saveGame(board, winner, idToken) {
       Authorization: `Bearer ${idToken}`,
     },
     body: JSON.stringify({
-      board,
-      winner,
+      grid,
+      score,
+      skillLevel,
       timestamp: new Date().toISOString(),
     }),
   });
 }
-

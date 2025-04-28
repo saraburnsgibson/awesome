@@ -33,13 +33,13 @@ app.post("/save-game", async (req, res) => {
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
-    const { board, winner, timestamp } = req.body;
-    console.log(`save-game params ${uid}  ${board}  ${winner}  ${timestamp}`);
+    const { grid, score, skillLevel, timestamp } = req.body;
 
     await db.collection("games").add({
       uid,
-      board,
-      winner,
+      grid,
+      score,
+      skillLevel,
       timestamp: timestamp || new Date().toISOString(),
     });
 
@@ -49,7 +49,6 @@ app.post("/save-game", async (req, res) => {
     res.status(500).send({ error: "Failed to save game" });
   }
 });
-
 
 
 const PORT = process.env.VITE_BACKEND_PORT || 5000;

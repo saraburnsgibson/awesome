@@ -1,12 +1,12 @@
-import React from 'react';
-import './tinytowns.css';
+import { getSkillLevel } from './scoring';
 
 export default function EndScreen() {
-  // Load final state from localStorage
   const storedGrid = localStorage.getItem('finalGrid');
   const grid = storedGrid ? JSON.parse(storedGrid) : Array(16).fill({ resource: null });
   const startTime = localStorage.getItem('startTime');
   const endTime = localStorage.getItem('endTime');
+  const score = Number(localStorage.getItem('score')) || 0;
+  const skillLevel = getSkillLevel(score);
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center py-10 px-4 font-sans">
@@ -15,6 +15,8 @@ export default function EndScreen() {
       <div className="mb-6 text-lg">
         <p><strong>Start Time:</strong> {startTime ? new Date(startTime).toLocaleString() : 'N/A'}</p>
         <p><strong>End Time:</strong> {endTime ? new Date(endTime).toLocaleString() : 'N/A'}</p>
+        <p><strong>Score:</strong> {score}</p>
+        <p><strong>Skill Level:</strong> {skillLevel}</p>
       </div>
 
       <div className="grid grid-cols-4 gap-2 bg-[#79a85c] p-4 rounded-xl shadow-inner">
@@ -33,6 +35,7 @@ export default function EndScreen() {
           localStorage.removeItem('finalGrid');
           localStorage.removeItem('startTime');
           localStorage.removeItem('endTime');
+          localStorage.removeItem('score');
           window.location.href = '/';
         }}
         className="mt-8 bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
