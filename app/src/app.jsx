@@ -4,6 +4,7 @@ import { BuildingStore } from './BuildingStore';
 import { TownGrid } from './TownGrid';
 import { ResourceSelector } from './ResourceSelector';
 import { useTownStore } from './store';
+import { calculateScore } from './scoring';
 
 export function App() {
   const grid = useTownStore(state => state.grid);
@@ -84,8 +85,11 @@ export function App() {
               </button>
               <button
                 onClick={() => {
+                  const grid = useTownStore.getState().grid;
+                  const score = calculateScore(grid);
                   localStorage.setItem('finalGrid', JSON.stringify(grid));
                   localStorage.setItem('startTime', startTime);
+                  localStorage.setItem('score', score);
                   const currentEnd = new Date().toISOString();
                   localStorage.setItem('endTime', currentEnd);
                   setEndTime();
