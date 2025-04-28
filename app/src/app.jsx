@@ -62,20 +62,6 @@ export function App() {
               <ResourceSelector />
             </div>
 
-            <div className="bg-[#d2b48c] text-[#3b2f2f] rounded-xl p-4 text-center">
-              <h2 className="text-lg font-bold mb-2">Your Score</h2>
-              <div className="text-2xl font-black">__</div>
-            </div>
-
-            <div className="bg-[#d2b48c] text-[#3b2f2f] rounded-xl p-4 text-center">
-              <h2 className="text-lg font-bold mb-2">Leaderboard</h2>
-              <div className="flex justify-center gap-2 mt-2">
-                <div className="resource-icon brick" />
-                <div className="resource-icon wheat" />
-                <div className="resource-icon glass" />
-              </div>
-            </div>
-
             <div className="flex justify-between gap-4 mt-4">
               <button
                 onClick={() => window.location.reload()}
