@@ -18,7 +18,7 @@ export function checkWinner(board) {
 }
 
 
-export async function saveGame(grid, score, skillLevel, idToken) {
+export async function saveGame(grid, score, skillLevel, achievements, idToken) {
   await fetch("http://localhost:3000/save-game", {
     method: "POST",
     headers: {
@@ -29,6 +29,7 @@ export async function saveGame(grid, score, skillLevel, idToken) {
       grid,
       score,
       skillLevel,
+      achievements,
       timestamp: new Date().toISOString(),
     }),
   });
