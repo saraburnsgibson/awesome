@@ -143,4 +143,5 @@ If you use environment variables for production, remember to configure:
 
 ## 💪 Ready to Play!
 
-That's it! Now you can enjoy your own Tiny Towns online experience. 🏘️ Thanks! -Sara Burns Gibson and Daniel Alexander
+That's it! Now you can enjoy your own Tiny Towns online experience. 🏘️ 
+Thanks! -Sara Burns Gibson and Daniel Alexander
