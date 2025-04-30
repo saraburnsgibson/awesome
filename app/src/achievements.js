@@ -31,10 +31,10 @@ export function detectAchievements(grid, startTime, endTime, score) {
     // 3. Speed Builder
     if (startTime && endTime) {
       const elapsedSeconds = (new Date(endTime) - new Date(startTime)) / 1000;
-      if (elapsedSeconds < 300) { // 5 minutes = 300 seconds
+      if (elapsedSeconds < 300 && score >= 20) {
         achievements.push("Speed Builder");
       }
-    }
+    }    
   
     // 4. Farming Frenzy
     if (farmCount >= 3) {
