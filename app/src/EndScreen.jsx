@@ -12,21 +12,36 @@ export default function EndScreen() {
   const achievements = JSON.parse(localStorage.getItem('achievements') || "[]");
 
   useEffect(() => {
-    const uploadGame = async () => {
+    const waitForUserAndUpload = async () => {
+      let user = window.firebaseUser;
+  
+      // Wait until Firebase finishes initializing
+      let retries = 20;
+      while (!user && !window.currentUserReady && retries-- > 0) {
+        await new Promise(res => setTimeout(res, 100));
+        user = window.firebaseUser;
+      }
+  
+      console.log("current user (after wait):", user);
+  
+      if (!user) {
+        console.warn("No Firebase user found. Not saving.");
+        return;
+      }
+  
       try {
-        const user = window.firebaseAuth?.currentUser;
-        if (!user) return;
-
         const idToken = await user.getIdToken();
+        console.log("Uploading game to backend...");
         await saveGame(grid, score, skillLevel, achievements, idToken);
-        console.log("✅ Game saved to Firebase.");
+        console.log("Game saved to Firebase.");
       } catch (err) {
-        console.error("❌ Failed to save game to Firebase:", err);
+        console.error("Failed to save game to Firebase:", err);
       }
     };
-
-    uploadGame();
+  
+    waitForUserAndUpload();
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center py-10 px-4 font-sans">

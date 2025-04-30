@@ -11,6 +11,25 @@
   <body class="bg-[#fef9f3] text-[#3b2f2f]">
     <div id="app"></div>
 
+    <!-- Firebase Auth Setup (no login required again) -->
+    <script>
+      fetch("/firebaseConfig.json")
+        .then(res => res.json())
+        .then(config => {
+          const app = firebase.initializeApp(config);
+          const auth = firebase.auth();
+          window.firebaseAuth = auth;
+
+          // Wait for user session and expose it
+          auth.onAuthStateChanged(user => {
+            window.currentUserReady = true;
+            window.firebaseUser = user;
+          });
+        })
+        .catch(err => console.error("Failed to load Firebase config:", err));
+    </script>
+
+    <!-- React App -->
     <script type="module" src="/src/end.jsx"></script>
   </body>
 </html>

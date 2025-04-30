@@ -7,6 +7,7 @@ services:
     working_dir: /app
     volumes:
       - ./app:/app
+      - ./secrets:/app/secrets
     command: sh -c "npm install && npx vite --host"
     restart: unless-stopped
 
@@ -18,6 +19,8 @@ services:
     working_dir: /app
     volumes:
       - ./app:/app
+      - ./secrets:/app/secrets 
     command: sh -c "npm install && node server.js"
     restart: unless-stopped
+
 

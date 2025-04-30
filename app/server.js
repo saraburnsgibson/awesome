@@ -13,8 +13,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
 const serviceAccount = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "serviceAccountKey.json"))
+  fs.readFileSync(path.join(__dirname, "secrets", "serviceAccountKey.json"))
 );
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
