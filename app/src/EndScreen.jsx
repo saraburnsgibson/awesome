@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { getSkillLevel } from './scoring';
+import { saveGame } from './logic';
 
 export default function EndScreen() {
   const storedGrid = localStorage.getItem('finalGrid');
@@ -8,6 +10,23 @@ export default function EndScreen() {
   const score = Number(localStorage.getItem('score')) || 0;
   const skillLevel = getSkillLevel(score);
   const achievements = JSON.parse(localStorage.getItem('achievements') || "[]");
+
+  useEffect(() => {
+    const uploadGame = async () => {
+      try {
+        const user = window.firebaseAuth?.currentUser;
+        if (!user) return;
+
+        const idToken = await user.getIdToken();
+        await saveGame(grid, score, skillLevel, achievements, idToken);
+        console.log("✅ Game saved to Firebase.");
+      } catch (err) {
+        console.error("❌ Failed to save game to Firebase:", err);
+      }
+    };
+
+    uploadGame();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center py-10 px-4 font-sans">
