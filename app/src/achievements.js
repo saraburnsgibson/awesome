@@ -20,7 +20,7 @@ export function detectAchievements(grid, startTime, endTime, score) {
   
     // 1. Perfectionist
     if (emptySpaces === 0) {
-      achievements.push("Perfectionist");
+      achievements.push("Perfect Town");
     }
   
     // 2. Architect Extraordinaire
