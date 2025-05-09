@@ -12,6 +12,7 @@ export default function EndScreen() {
   const achievements = JSON.parse(localStorage.getItem('achievements') || "[]");
 
   useEffect(() => {
+<<<<<<< HEAD
     const waitForUserAndUpload = async () => {
       let user = window.firebaseUser;
   
@@ -42,6 +43,23 @@ export default function EndScreen() {
     waitForUserAndUpload();
   }, []);
   
+=======
+    const uploadGame = async () => {
+      try {
+        const user = window.firebaseAuth?.currentUser;
+        if (!user) return;
+
+        const idToken = await user.getIdToken();
+        await saveGame(grid, score, skillLevel, achievements, idToken);
+        console.log("✅ Game saved to Firebase.");
+      } catch (err) {
+        console.error("❌ Failed to save game to Firebase:", err);
+      }
+    };
+
+    uploadGame();
+  }, []);
+>>>>>>> b40ac3d9d28fdce6d32b96a280cccbcd7caea273
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center py-10 px-4 font-sans">
