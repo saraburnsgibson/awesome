@@ -18,6 +18,6 @@ services:
     working_dir: /app
     volumes:
       - ./app:/app
-    command: sh -c "npm install && node server.js"
+    command: sh -c "npm cache clear --force && npm update && npm install --force && node server.js"
     restart: unless-stopped
 
