@@ -14,21 +14,21 @@ export default function EndScreen() {
   useEffect(() => {
     const waitForUserAndUpload = async () => {
       let user = window.firebaseUser;
-  
+
       // Wait until Firebase finishes initializing
       let retries = 20;
       while (!user && !window.currentUserReady && retries-- > 0) {
         await new Promise(res => setTimeout(res, 100));
         user = window.firebaseUser;
       }
-  
+
       console.log("current user (after wait):", user);
-  
+
       if (!user) {
         console.warn("No Firebase user found. Not saving.");
         return;
       }
-  
+
       try {
         const idToken = await user.getIdToken();
         console.log("Uploading game to backend...");
@@ -38,10 +38,9 @@ export default function EndScreen() {
         console.error("Failed to save game to Firebase:", err);
       }
     };
-  
+
     waitForUserAndUpload();
   }, []);
-  
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center py-10 px-4 font-sans">
@@ -78,19 +77,28 @@ export default function EndScreen() {
         ))}
       </div>
 
-      <button
-        onClick={() => {
-          localStorage.removeItem('finalGrid');
-          localStorage.removeItem('startTime');
-          localStorage.removeItem('endTime');
-          localStorage.removeItem('score');
-          localStorage.removeItem('achievements');
-          window.location.href = '/';
-        }}
-        className="mt-8 bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-      >
-        Back to Game
-      </button>
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <button
+          onClick={() => {
+            localStorage.removeItem('finalGrid');
+            localStorage.removeItem('startTime');
+            localStorage.removeItem('endTime');
+            localStorage.removeItem('score');
+            localStorage.removeItem('achievements');
+            window.location.href = '/';
+          }}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Back to Game
+        </button>
+
+        <button
+          onClick={() => window.location.href = '/profile.html'}
+          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Profile Page
+        </button>
+      </div>
     </div>
   );
 }

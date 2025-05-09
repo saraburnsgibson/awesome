@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/tinytowns.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ✅ Firebase Auth setup for profile page -->
+    <script>
+      fetch("/firebaseConfig.json")
+        .then(res => res.json())
+        .then(config => {
+          const app = firebase.initializeApp(config);
+          const auth = firebase.auth();
+          window.firebaseAuth = auth;
+
+          auth.onAuthStateChanged(user => {
+            if (user) {
+              window.firebaseUser = user;
+              window.currentUserReady = true;
+            }
+          });
+        })
+        .catch(err => console.error("Failed to load Firebase config:", err));
+    </script>
+  </head>
+
+  <body class="bg-[#fef9f3] text-[#3b2f2f]">
+    <div id="app"></div>
+    <script type="module" src="/src/end.jsx"></script>
+  </body>
+</html>

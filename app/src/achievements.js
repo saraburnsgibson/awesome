@@ -48,4 +48,12 @@ export function detectAchievements(grid, startTime, endTime, score) {
   
     return achievements;
   }
+
+  export const ALL_ACHIEVEMENTS = [
+    "Perfect Town",
+    "Architect Extraordinaire",
+    "Speed Builder",
+    "Farming Frenzy",
+    "Legendary Score"
+  ];
   
