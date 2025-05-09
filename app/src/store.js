@@ -104,36 +104,32 @@ export const useTownStore = create((set, get) => ({
   selectedResource: null,
   selectedGrid: [],
   selectedBuilding: null,
-  factoryResource: null, 
   startTime: new Date().toISOString(),
   endTime: null,
 
   setSelectedResource: (resource, deckIndex) =>
     set({ selectedResource: { resource, deckIndex } }),
 
-  setFactoryResource: (resource) => set({ factoryResource: resource }),
   placeResource: gridIndex =>
     set(state => {
       const { grid, visibleCards, deckQueue, selectedResource } = state;
       if (!selectedResource || grid[gridIndex].resource) return {};
-  
+
       const newGrid = grid.map((cell, idx) =>
         idx === gridIndex
           ? { resource: selectedResource.resource, selected: false, topLeft: false }
           : cell
       );
-  
+
       const newVisible = [...visibleCards];
       const newQueue = [...deckQueue];
-  
-      // Replace the used visible card with the next card from the queue (if available)
+
       if (newQueue.length > 0) {
         newVisible[selectedResource.deckIndex] = newQueue.shift();
       } else {
-        // If queue is empty, just remove the card
         newVisible.splice(selectedResource.deckIndex, 1);
       }
-  
+
       return {
         grid: newGrid,
         visibleCards: newVisible,
@@ -142,7 +138,7 @@ export const useTownStore = create((set, get) => ({
         selectedGrid: [],
         selectedBuilding: null,
       };
-    }),  
+    }),
 
   toggleCell: index =>
     set(state => {
@@ -169,7 +165,7 @@ export const useTownStore = create((set, get) => ({
 
   placeBuilding: clickedIndex => {
     const state = get();
-    const { selectedBuilding, grid, selectedGrid, deck } = state;
+    const { selectedBuilding, grid, selectedGrid } = state;
     if (!selectedBuilding || !selectedGrid.includes(clickedIndex)) return;
 
     const { building, orientation } = selectedBuilding;
@@ -217,19 +213,18 @@ export const useTownStore = create((set, get) => ({
         }
         return { ...cell, selected: false };
       });
-      
+
       for (let i = 0; i < template.length; i++) {
         for (let j = 0; j < template[0].length; j++) {
           const val = template[i][j];
           const idx = (startRow + i) * 4 + (startCol + j);
           if (val !== '') {
             newGrid[idx] = idx === clickedIndex
-          ? { resource: building, selected: false, topLeft: true }
-          : { resource: null, selected: false, topLeft: false };
+              ? { resource: building, selected: false, topLeft: true, building, storedResource: null }
+              : { resource: null, selected: false, topLeft: false };
           }
         }
       }
-      
 
       set({
         grid: newGrid,
@@ -240,6 +235,13 @@ export const useTownStore = create((set, get) => ({
       return;
     }
   },
+
+  setFactoryResource: (index, resource) =>
+    set(state => {
+      const grid = [...state.grid];
+      grid[index] = { ...grid[index], storedResource: resource };
+      return { grid };
+    }),
 
   setEndTime: () => set({ endTime: new Date().toISOString() }),
 
@@ -254,4 +256,4 @@ export const useTownStore = create((set, get) => ({
       startTime: new Date().toISOString(),
       endTime: null,
     }),
-}))
+}));
