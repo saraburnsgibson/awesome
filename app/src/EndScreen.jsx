@@ -34,8 +34,19 @@ export default function EndScreen() {
         console.log("Uploading game to backend...");
         await saveGame(grid, score, skillLevel, achievements, idToken);
         console.log("Game saved to Firebase.");
+
+        // Update playedGames and achievements in Firestore
+        await firebase.firestore().collection('users').doc(user.uid).set(
+          {
+            playedGames: firebase.firestore.FieldValue.increment(1),
+            achievements: firebase.firestore.FieldValue.arrayUnion(...achievements),
+          },
+          { merge: true }
+        );
+       
+        console.log("✅ Firestore playedGames incremented.");
       } catch (err) {
-        console.error("Failed to save game to Firebase:", err);
+        console.error("❌ Failed to save game or update user stats:", err);
       }
     };
 

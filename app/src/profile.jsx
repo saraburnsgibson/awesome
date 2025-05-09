@@ -15,7 +15,7 @@ function Profile() {
       const doc = await firebase.firestore().collection('users').doc(uid).get();
       if (doc.exists) {
         const data = doc.data();
-        console.log("Firestore raw achievements:", data.achievements); // ✅ Debug
+        console.log("Firestore raw achievements:", data.achievements);
         setPlayedGames(data.playedGames || 0);
         const achievements = Array.isArray(data.achievements)
           ? data.achievements
