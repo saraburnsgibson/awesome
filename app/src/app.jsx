@@ -72,21 +72,32 @@ export function App() {
               </button>
               <button
                   onClick={() => {
-                    const grid = useTownStore.getState().grid;
-                    const score = calculateScore(grid);
+                    const originalGrid = useTownStore.getState().grid;
+                  
+                    // Remove leftover resources (preserve only buildings)
+                    const cleanedGrid = originalGrid.map(cell => {
+                      const isBuilding = !['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource);
+                      return isBuilding ? cell : { ...cell, resource: null };
+                    });
+                  
+                    // Optional: visually update the grid before redirecting
+                    useTownStore.setState({ grid: cleanedGrid });
+                  
+                    const score = calculateScore(cleanedGrid);
                     const startTime = useTownStore.getState().startTime;
                     const currentEnd = new Date().toISOString();
-                    const achievements = detectAchievements(grid, startTime, currentEnd, score);
-                
-                    localStorage.setItem('finalGrid', JSON.stringify(grid));
+                    const achievements = detectAchievements(cleanedGrid, startTime, currentEnd, score);
+                  
+                    localStorage.setItem('finalGrid', JSON.stringify(cleanedGrid));
                     localStorage.setItem('startTime', startTime);
                     localStorage.setItem('endTime', currentEnd);
                     localStorage.setItem('score', score);
                     localStorage.setItem('achievements', JSON.stringify(achievements));
-                    
+                  
                     useTownStore.getState().setEndTime();
                     window.location.href = '/end.html';
                   }}
+                  
                 className="flex-1 bg-[#a83232] text-[#fdf4e3] py-2 rounded-md font-semibold"
               >
                 End Game
