@@ -26,8 +26,12 @@ app.post("/save-game", async (req, res) => {
   const idToken = req.headers.authorization?.split("Bearer ")[1];
 
   try {
+    console.log("🟡 Incoming save-game request");
+
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
+    console.log("✅ Authenticated UID:", uid);
+
     const { grid, score, skillLevel, timestamp, achievements } = req.body;
 
     await db.collection("games").add({ uid, grid, score, skillLevel, achievements, timestamp });
