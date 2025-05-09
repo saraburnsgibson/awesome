@@ -104,12 +104,14 @@ export const useTownStore = create((set, get) => ({
   selectedResource: null,
   selectedGrid: [],
   selectedBuilding: null,
+  factoryResource: null, 
   startTime: new Date().toISOString(),
   endTime: null,
 
   setSelectedResource: (resource, deckIndex) =>
     set({ selectedResource: { resource, deckIndex } }),
 
+  setFactoryResource: (resource) => set({ factoryResource: resource }),
   placeResource: gridIndex =>
     set(state => {
       const { grid, visibleCards, deckQueue, selectedResource } = state;
