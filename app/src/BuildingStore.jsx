@@ -9,6 +9,7 @@ const resourceColors = {
   wood: '#5e2c04',
 };
 
+// this function is tested 100%
 function matchTemplate(selectedGrid, grid, template) {
   if (selectedGrid.length === 0) return false;
 
@@ -35,6 +36,9 @@ function matchTemplate(selectedGrid, grid, template) {
   const sortedTemp = templateSelected.slice().sort();
   return JSON.stringify(sortedSel) === JSON.stringify(sortedTemp);
 }
+
+// make the helper available to tests
+export { matchTemplate };
 
 function getCircleColor(buildingName) {
   const tempEl = document.createElement("div");

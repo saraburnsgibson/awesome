@@ -163,6 +163,7 @@ export const useTownStore = create((set, get) => ({
       return { grid: newGrid, selectedGrid: [], selectedBuilding: null };
     }),
 
+  // this function is placed 100%
   placeBuilding: clickedIndex => {
     const state = get();
     const { selectedBuilding, grid, selectedGrid } = state;

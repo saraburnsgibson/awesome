@@ -1,5 +1,5 @@
 // tests/logic.test.js
-import { describe, test, expect } from 'vitest'
+import { describe, test, expect, beforeEach } from 'vitest'
 import {
   scoreEmpty,
   computeFeedingCapacity,
@@ -15,8 +15,21 @@ import {
   getSkillLevel
 } from '../src/scoring.js'
 
+// NEW imports for pattern‐matching tests
+import { matchTemplate } from '../src/BuildingStore.jsx'
+import { buildingTemplates, useTownStore } from '../src/store.js'
+
 function makeGrid(resources) {
   return resources.map(r => ({ resource: r }))
+}
+
+// Helper to build the full cell objects for the store
+function makeStoreGrid(resources) {
+  return resources.map(r => ({
+    resource: r,
+    selected: false,
+    topLeft: false
+  }))
 }
 
 describe('scoreEmpty', () => {
@@ -201,5 +214,70 @@ describe('getSkillLevel', () => {
     test(`score ${score} => ${level}`, () => {
       expect(getSkillLevel(score)).toBe(level)
     })
+  })
+})
+
+// -----------------Pattern MAtching
+describe('matchTemplate (BuildingStore.jsx)', () => {
+  const farmTemplate = buildingTemplates.farm[0]
+
+  test('returns false for empty selection', () => {
+    const grid = makeGrid(Array(16).fill(null))
+    expect(matchTemplate([], grid, farmTemplate)).toBe(false)
+  })
+
+  test('detects matching farm pattern', () => {
+    // place that 2×2 farm block at indices [0,1,4,5]
+    const resources = Array(16).fill(null)
+    resources[0] = 'wheat'
+    resources[1] = 'wheat'
+    resources[4] = 'wood'
+    resources[5] = 'wood'
+    const grid = makeGrid(resources)
+    expect(matchTemplate([0,1,4,5], grid, farmTemplate)).toBe(true)
+  })
+
+  test('returns false for non-matching pattern', () => {
+    const resources = Array(16).fill(null)
+    resources[0] = 'wheat'
+    resources[1] = 'wood'   // wrong
+    resources[4] = 'wood'
+    resources[5] = 'wood'
+    const grid = makeGrid(resources)
+    expect(matchTemplate([0,1,4,5], grid, farmTemplate)).toBe(false)
+  })
+})
+
+describe('placeBuilding (store.js)', () => {
+  beforeEach(() => {
+    // reset the grid & other state
+    useTownStore.getState().resetGrid()
+  })
+
+  test('places a well and moves consumed resources into deckQueue', () => {
+    // 1) seed a simple wood+stone pattern at [4,5]
+    const resources = Array(16).fill(null)
+    resources[4] = 'wood'
+    resources[5] = 'stone'
+    const customGrid = makeStoreGrid(resources)
+
+    // 2) set store state
+    useTownStore.setState({
+      grid: customGrid,
+      selectedGrid: [4,5],
+      selectedBuilding: { building: 'well', orientation: 0 },
+      deckQueue: []
+    })
+
+    // 3) invoke the placement action
+    useTownStore.getState().placeBuilding(4)
+
+    // 4) inspect final state
+    const s = useTownStore.getState()
+    expect(s.grid[4].resource).toBe('well')
+    expect(s.grid[4].topLeft).toBe(true)
+    expect(s.selectedGrid).toEqual([])
+    expect(s.selectedBuilding).toBeNull()
+    expect(s.deckQueue).toEqual(['wood','stone'])
   })
 })
