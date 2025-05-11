@@ -77,16 +77,19 @@ export default function EndScreen() {
         )}
       </div>
 
-      <div className="grid grid-cols-4 gap-2 bg-[#79a85c] p-4 rounded-xl shadow-inner">
-        {grid.map((cell, idx) => (
-          <div
-            key={idx}
-            className="w-16 h-16 flex items-center justify-center rounded bg-[#d2b48c] text-sm font-semibold text-center"
-          >
-            {cell.resource || ''}
-          </div>
-        ))}
+      <div className="flex justify-center mb-6">
+  <div className="grid grid-cols-4 gap-2 bg-[#79a85c] p-4 rounded-xl shadow-inner">
+    {grid.map((cell, idx) => (
+      <div
+        key={idx}
+        className="w-16 h-16 flex items-center justify-center rounded bg-[#d2b48c] text-sm font-semibold text-center"
+      >
+        {cell.resource || ''}
       </div>
+    ))}
+  </div>
+</div>
+
 
       <div className="mt-8 flex flex-col items-center gap-4">
         <button

@@ -1,12 +1,22 @@
 /* This is your TinyTowns CSS, aligned with your design vision and Tailwind */
 
 body {
-    background-color: #3a2e25;
-    font-family: 'Arial Rounded MT Bold', system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-    color: white;
+  background-color: #3a2e25;
+  font-family: 'MedievalSharp', serif !important;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+button, h1, h2, h3, .text-2xl, .font-bold {
+  font-family: 'MedievalSharp', serif !important;
+}
+
+  h1, h2, .heading {
+    font-family: 'MedievalSharp', serif;
   }
+
+  
   
   .scaling-container {
     display: flex;

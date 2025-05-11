@@ -24,6 +24,12 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#6b4b3e] text-[#fdf4e3] flex flex-col items-center py-6 px-4 font-sans">
+      
+      {/* Logo */}
+      <div className="flex flex-col items-center gap-4 mb-4">
+        <img src="/textures/logo.png" alt="Tiny Towns Logo" className="w-36 md:w-48" />
+      </div>
+
       {/* Greeting and Logout */}
       <div className="w-full max-w-7xl flex justify-between items-center text-2xl font-bold mb-4 px-2">
         <div>
@@ -44,6 +50,7 @@ export function App() {
 
       {/* Game Layout */}
       <div className="w-full max-w-7xl flex flex-col gap-6">
+        
         {/* Building Cards */}
         <section className="p-2 rounded-xl flex flex-wrap justify-center gap-4 bg-transparent">
           <BuildingStore />
@@ -51,6 +58,7 @@ export function App() {
 
         {/* Game Area */}
         <div className="flex flex-col lg:flex-row gap-6">
+          
           {/* Grid */}
           <div className="board-wrapper inline-block">
             <TownGrid />
@@ -70,34 +78,33 @@ export function App() {
               >
                 Restart Game
               </button>
+
               <button
-                  onClick={() => {
-                    const originalGrid = useTownStore.getState().grid;
-                  
-                    // Remove leftover resources (preserve only buildings)
-                    const cleanedGrid = originalGrid.map(cell => {
-                      const isBuilding = !['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource);
-                      return isBuilding ? cell : { ...cell, resource: null };
-                    });
-                  
-                    // Optional: visually update the grid before redirecting
-                    useTownStore.setState({ grid: cleanedGrid });
-                  
-                    const score = calculateScore(cleanedGrid);
-                    const startTime = useTownStore.getState().startTime;
-                    const currentEnd = new Date().toISOString();
-                    const achievements = detectAchievements(cleanedGrid, startTime, currentEnd, score);
-                  
-                    localStorage.setItem('finalGrid', JSON.stringify(cleanedGrid));
-                    localStorage.setItem('startTime', startTime);
-                    localStorage.setItem('endTime', currentEnd);
-                    localStorage.setItem('score', score);
-                    localStorage.setItem('achievements', JSON.stringify(achievements));
-                  
-                    useTownStore.getState().setEndTime();
-                    window.location.href = '/end.html';
-                  }}
-                  
+                onClick={() => {
+                  const originalGrid = useTownStore.getState().grid;
+
+                  // Remove leftover resources (preserve only buildings)
+                  const cleanedGrid = originalGrid.map(cell => {
+                    const isBuilding = !['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource);
+                    return isBuilding ? cell : { ...cell, resource: null };
+                  });
+
+                  useTownStore.setState({ grid: cleanedGrid });
+
+                  const score = calculateScore(cleanedGrid);
+                  const startTime = useTownStore.getState().startTime;
+                  const currentEnd = new Date().toISOString();
+                  const achievements = detectAchievements(cleanedGrid, startTime, currentEnd, score);
+
+                  localStorage.setItem('finalGrid', JSON.stringify(cleanedGrid));
+                  localStorage.setItem('startTime', startTime);
+                  localStorage.setItem('endTime', currentEnd);
+                  localStorage.setItem('score', score);
+                  localStorage.setItem('achievements', JSON.stringify(achievements));
+
+                  useTownStore.getState().setEndTime();
+                  window.location.href = '/end.html';
+                }}
                 className="flex-1 bg-[#a83232] text-[#fdf4e3] py-2 rounded-md font-semibold"
               >
                 End Game
