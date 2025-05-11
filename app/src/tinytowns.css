@@ -213,5 +213,59 @@ h1, h2, .heading {
   margin: 0.25rem auto;
 }
 
+button {
+  font-family: 'MedievalSharp', serif !important;
+}
+
+.button-primary {
+  background-color: #5c4430;
+  color: #fdf4e3;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-family: 'MedievalSharp', serif;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.button-primary:hover {
+  background-color: #3e2d22;
+}
+
+.highscore-banner {
+  position: absolute;
+  top: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fffae6;
+  border: 2px solid #ffe08a;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #a76300;
+  z-index: 1000;
+}
+
+@keyframes fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+.animate-fade-slide {
+  animation: fade-slide 4s ease-in-out forwards;
+}
+
+
+
 /* Tailwind Reset Harmony */
 .text-white { color: white; }

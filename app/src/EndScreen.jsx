@@ -16,29 +16,26 @@ export default function EndScreen() {
 
   useEffect(() => {
     const waitForUserAndUpload = async () => {
-      let user = window.firebaseUser;
-
-      // Wait until Firebase finishes initializing
       let retries = 20;
-      while (!user && !window.currentUserReady && retries-- > 0) {
+      let user = firebase.auth().currentUser;
+    
+      // Wait until Firebase Auth is ready
+      while (!user && retries-- > 0) {
         await new Promise(res => setTimeout(res, 100));
-        user = window.firebaseUser;
+        user = firebase.auth().currentUser;
       }
-
+    
       console.log("current user (after wait):", user);
-
+    
       if (!user) {
         console.warn("No Firebase user found. Not saving.");
         return;
       }
-
+    
       try {
         const idToken = await user.getIdToken();
-        console.log("Uploading game to backend...");
         await saveGame(grid, score, skillLevel, achievements, idToken);
-        console.log("Game saved to Firebase.");
-
-        // Update playedGames and achievements in Firestore
+    
         await firebase.firestore().collection('users').doc(user.uid).set(
           {
             playedGames: firebase.firestore.FieldValue.increment(1),
@@ -46,15 +43,13 @@ export default function EndScreen() {
           },
           { merge: true }
         );
-
-        console.log("Firestore playedGames incremented.");
-
-        // Get highest score from user's game history
+    
+        // Fetch high score
         const gamesSnapshot = await firebase.firestore()
           .collection('games')
           .where('uid', '==', user.uid)
           .get();
-
+    
         let maxScore = 0;
         gamesSnapshot.forEach(doc => {
           const game = doc.data();
@@ -62,17 +57,16 @@ export default function EndScreen() {
             maxScore = game.score;
           }
         });
-
+    
         setHighestScore(maxScore);
-
         if (score >= maxScore) {
           setNewHighScore(true);
         }
-
+    
       } catch (err) {
         console.error("❌ Failed to save game or update user stats:", err);
       }
-    };
+    };    
 
     waitForUserAndUpload();
   }, []);
@@ -125,27 +119,35 @@ export default function EndScreen() {
 
       {/* Navigation Buttons */}
       <div className="mt-8 flex flex-row justify-center gap-4">
-        <button
-          onClick={() => {
-            localStorage.removeItem('finalGrid');
-            localStorage.removeItem('startTime');
-            localStorage.removeItem('endTime');
-            localStorage.removeItem('score');
-            localStorage.removeItem('achievements');
-            window.location.href = '/';
-          }}
-          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-        >
-          Back to Game
-        </button>
+  <button
+    onClick={() => {
+      localStorage.removeItem('finalGrid');
+      localStorage.removeItem('startTime');
+      localStorage.removeItem('endTime');
+      localStorage.removeItem('score');
+      localStorage.removeItem('achievements');
+      window.location.href = '/';
+    }}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Back to Game
+  </button>
 
-        <button
-          onClick={() => window.location.href = '/profile.html'}
-          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-        >
-          Profile
-        </button>
-      </div>
+  <button
+    onClick={() => window.location.href = '/profile.html'}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Profile
+  </button>
+
+  <button
+    onClick={() => window.location.href = '/leaderboard.html'}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Leaderboard
+  </button>
+</div>
+
     </div>
   );
 }

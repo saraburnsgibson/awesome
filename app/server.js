@@ -30,11 +30,21 @@ app.post("/save-game", async (req, res) => {
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
+    const name = decodedToken.name || decodedToken.email || "Anonymous";
     console.log("Authenticated UID:", uid);
 
     const { grid, score, skillLevel, timestamp, achievements } = req.body;
 
-    await db.collection("games").add({ uid, grid, score, skillLevel, achievements, timestamp });
+    await db.collection("games").add({
+      uid,
+      name,
+      grid,
+      score,
+      skillLevel,
+      achievements,
+      timestamp,
+    });
+
     console.log("Game saved");
 
     const userRef = db.collection("users").doc(uid);
@@ -48,7 +58,13 @@ app.post("/save-game", async (req, res) => {
     const mergedAchievements = Array.from(new Set([...existing, ...achievements]));
     console.log("Merged achievements:", mergedAchievements);
 
-    await userRef.set({ uid, achievements: mergedAchievements }, { merge: true });
+    await userRef.set(
+      {
+        uid,
+        achievements: mergedAchievements,
+      },
+      { merge: true }
+    );
     console.log("User profile written to /users:", uid);
 
     res.status(200).send({ success: true });

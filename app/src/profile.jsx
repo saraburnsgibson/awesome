@@ -105,21 +105,29 @@ function Profile() {
         <p className="text-md italic text-gray-600">No achievements earned yet.</p>
       )}
 
-      <div className="mt-8 flex flex-row justify-center gap-4">
-        <button
-          onClick={() => window.location.href = '/'}
-          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-        >
-          Back to Game
-        </button>
+<div className="mt-8 flex flex-row justify-center gap-4">
+  <button
+    onClick={() => window.location.href = '/'}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Back to Game
+  </button>
 
-        <button
-          onClick={() => window.location.href = '/end.html'}
-          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-        >
-          Back to Summary
-        </button>
-      </div>
+  <button
+    onClick={() => window.location.href = '/end.html'}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Back to Summary
+  </button>
+
+  <button
+    onClick={() => window.location.href = '/leaderboard.html'}
+    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+  >
+    Leaderboard
+  </button>
+</div>
+
     </div>
   );
 }
