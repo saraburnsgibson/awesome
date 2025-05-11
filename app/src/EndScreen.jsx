@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getSkillLevel } from './scoring';
 import { saveGame } from './logic';
 
@@ -10,6 +10,8 @@ export default function EndScreen() {
   const score = Number(localStorage.getItem('score')) || 0;
   const skillLevel = getSkillLevel(score);
   const achievements = JSON.parse(localStorage.getItem('achievements') || "[]");
+
+  const [highestScore, setHighestScore] = useState(0); // ✅ NEW
 
   useEffect(() => {
     const waitForUserAndUpload = async () => {
@@ -43,8 +45,24 @@ export default function EndScreen() {
           },
           { merge: true }
         );
-       
+
         console.log("✅ Firestore playedGames incremented.");
+
+        // ✅ Get highest score from games collection
+        const gamesSnapshot = await firebase.firestore()
+          .collection('games')
+          .where('uid', '==', user.uid)
+          .get();
+
+        let maxScore = 0;
+        gamesSnapshot.forEach(doc => {
+          const game = doc.data();
+          if (typeof game.score === 'number' && game.score > maxScore) {
+            maxScore = game.score;
+          }
+        });
+
+        setHighestScore(maxScore);
       } catch (err) {
         console.error("❌ Failed to save game or update user stats:", err);
       }
@@ -61,6 +79,7 @@ export default function EndScreen() {
         <p><strong>Start Time:</strong> {startTime ? new Date(startTime).toLocaleString() : 'N/A'}</p>
         <p><strong>End Time:</strong> {endTime ? new Date(endTime).toLocaleString() : 'N/A'}</p>
         <p><strong>Score:</strong> {score}</p>
+        <p><strong>Highest Score:</strong> {highestScore}</p>
         <p><strong>Skill Level:</strong> {skillLevel}</p>
       </div>
 
@@ -77,21 +96,22 @@ export default function EndScreen() {
         )}
       </div>
 
+      {/* Grid Preview */}
       <div className="flex justify-center mb-6">
-  <div className="grid grid-cols-4 gap-2 bg-[#79a85c] p-4 rounded-xl shadow-inner">
-    {grid.map((cell, idx) => (
-      <div
-        key={idx}
-        className="w-16 h-16 flex items-center justify-center rounded bg-[#d2b48c] text-sm font-semibold text-center"
-      >
-        {cell.resource || ''}
+        <div className="grid grid-cols-4 gap-2 bg-[#79a85c] p-4 rounded-xl shadow-inner">
+          {grid.map((cell, idx) => (
+            <div
+              key={idx}
+              className="w-16 h-16 flex items-center justify-center rounded bg-[#d2b48c] text-sm font-semibold text-center"
+            >
+              {cell.resource || ''}
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
 
-
-      <div className="mt-8 flex flex-col items-center gap-4">
+      {/* Navigation Buttons */}
+      <div className="mt-8 flex flex-row justify-center gap-4">
         <button
           onClick={() => {
             localStorage.removeItem('finalGrid');
@@ -108,9 +128,9 @@ export default function EndScreen() {
 
         <button
           onClick={() => window.location.href = '/profile.html'}
-          className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-6 rounded-md font-semibold"
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
         >
-          Profile Page
+          Profile
         </button>
       </div>
     </div>

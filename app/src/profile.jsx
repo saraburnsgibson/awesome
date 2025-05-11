@@ -4,6 +4,7 @@ import './tinytowns.css';
 
 function Profile() {
   const [playedGames, setPlayedGames] = useState(null);
+  const [highestScore, setHighestScore] = useState(0); // ✅ New state
   const [userAchievements, setUserAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -11,11 +12,11 @@ function Profile() {
     try {
       const uid = user?.uid;
       if (!uid) return;
-
+  
+      // Get user-level data
       const doc = await firebase.firestore().collection('users').doc(uid).get();
       if (doc.exists) {
         const data = doc.data();
-        console.log("Firestore raw achievements:", data.achievements); // ✅ Debug
         setPlayedGames(data.playedGames || 0);
         const achievements = Array.isArray(data.achievements)
           ? data.achievements
@@ -24,8 +25,24 @@ function Profile() {
           : [];
         setUserAchievements(achievements);
       }
+  
+      // ✅ Fetch games to find highest score
+      const gamesSnapshot = await firebase.firestore()
+        .collection('games')
+        .where('uid', '==', uid)
+        .get();
+  
+      let maxScore = 0;
+      gamesSnapshot.forEach(doc => {
+        const game = doc.data();
+        if (typeof game.score === 'number' && game.score > maxScore) {
+          maxScore = game.score;
+        }
+      });
+  
+      setHighestScore(maxScore);
     } catch (err) {
-      console.error("Error fetching user profile:", err);
+      console.error("Error fetching user profile or games:", err);
     } finally {
       setLoading(false);
     }
@@ -66,6 +83,10 @@ function Profile() {
         <strong>Games Played:</strong> {playedGames}
       </p>
 
+      <p className="text-lg">
+        <strong>Highest Score:</strong> {highestScore}
+      </p>
+
       {userAchievements.length > 0 ? (
         <div className="w-full max-w-md bg-[#d2b48c] p-6 rounded-xl shadow-inner">
           <h2 className="text-2xl font-bold mb-4 text-center">Achievements</h2>
@@ -84,12 +105,21 @@ function Profile() {
         <p className="text-md italic text-gray-600">No achievements earned yet.</p>
       )}
 
-      <button
-        onClick={() => (window.location.href = '/end.html')}
-        className="mt-6 bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-      >
-        Back to Summary
-      </button>
+      <div className="mt-8 flex flex-row justify-center gap-4">
+        <button
+          onClick={() => window.location.href = '/'}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Back to Game
+        </button>
+
+        <button
+          onClick={() => window.location.href = '/end.html'}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Back to Summary
+        </button>
+      </div>
     </div>
   );
 }
