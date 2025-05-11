@@ -11,7 +11,8 @@ export default function EndScreen() {
   const skillLevel = getSkillLevel(score);
   const achievements = JSON.parse(localStorage.getItem('achievements') || "[]");
 
-  const [highestScore, setHighestScore] = useState(0); // ✅ NEW
+  const [highestScore, setHighestScore] = useState(0);
+  const [newHighScore, setNewHighScore] = useState(false);
 
   useEffect(() => {
     const waitForUserAndUpload = async () => {
@@ -48,7 +49,7 @@ export default function EndScreen() {
 
         console.log("✅ Firestore playedGames incremented.");
 
-        // ✅ Get highest score from games collection
+        // Get highest score from user's game history
         const gamesSnapshot = await firebase.firestore()
           .collection('games')
           .where('uid', '==', user.uid)
@@ -63,6 +64,11 @@ export default function EndScreen() {
         });
 
         setHighestScore(maxScore);
+
+        if (score >= maxScore) {
+          setNewHighScore(true);
+        }
+
       } catch (err) {
         console.error("❌ Failed to save game or update user stats:", err);
       }
@@ -79,7 +85,14 @@ export default function EndScreen() {
         <p><strong>Start Time:</strong> {startTime ? new Date(startTime).toLocaleString() : 'N/A'}</p>
         <p><strong>End Time:</strong> {endTime ? new Date(endTime).toLocaleString() : 'N/A'}</p>
         <p><strong>Score:</strong> {score}</p>
-        <p><strong>Highest Score:</strong> {highestScore}</p>
+        <p className={`font-semibold ${newHighScore ? 'text-green-600 text-xl animate-bounce' : ''}`}>
+          <strong>Highest Score:</strong> {highestScore}
+          {newHighScore && (
+            <span className="ml-2 bg-green-200 text-green-800 px-2 py-1 rounded font-bold text-sm">
+              🎉 New High Score!
+            </span>
+          )}
+        </p>
         <p><strong>Skill Level:</strong> {skillLevel}</p>
       </div>
 
