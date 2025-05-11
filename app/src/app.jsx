@@ -52,7 +52,7 @@ export function App() {
         {/* Game Area */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Grid */}
-          <div className="bg-[#79a85c] px-4 py-2 rounded-xl shadow-inner inline-block">
+          <div className="board-wrapper inline-block">
             <TownGrid />
           </div>
 
