@@ -2,7 +2,7 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import { App } from "../src/app.jsx";
 import { useTownStore } from "../src/store";
-import { act } from "react"; // ✅ Use react's act instead of deprecated react-dom
+import { act } from "react";
 
 describe("Tiny Towns UI functionality", () => {
   beforeEach(() => {

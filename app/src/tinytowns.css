@@ -12,94 +12,86 @@ button, h1, h2, h3, .text-2xl, .font-bold {
   font-family: 'MedievalSharp', serif !important;
 }
 
-  h1, h2, .heading {
-    font-family: 'MedievalSharp', serif;
-  }
+h1, h2, .heading {
+  font-family: 'MedievalSharp', serif;
+}
 
-  
-  
-  .scaling-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    transform: scale(1.1);
-    transform-origin: top center;
-    padding: 1rem;
-  }
-  
-  /* ========== Top Section: Building Store ========== */
-  .buildings {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .building-card {
-    position: relative;
-    width: 90px;
-    height: 130px;
-    background-color: #D2B48C;
-    border-radius: 10px;
-    border: 2px solid #8b5a2b;
-    box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    text-transform: capitalize;
-    cursor: pointer;
-    text-align: center;
-  }
-  
-  .building-card.selected {
-    outline: 4px solid #FF5B61;
-    outline-offset: -2px;
-  }
-  
-  .building-card-header {
-    font-size: 1rem;
-  }
-  
-  /* ========== Middle Section: Game Board and Resource Selector ========== */
-  .game-area {
-    display: flex;
-    flex-direction: row;
-    gap: 3rem;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  
-  .board-wrapper {
-    width: 340px;
-    height: 340px;
-    background: url('/textures/board.png') no-repeat;
-    background-size: 390px 390px;  /* scale image larger than wrapper */
-    background-position: center;
-    border-radius: 8px;
-    position: relative;  
-    background-position: -30px -29px;
-  }
-  
+.scaling-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  transform: scale(1.1);
+  transform-origin: top center;
+  padding: 1rem;
+}
 
+/* ========== Top Section: Building Store ========== */
+.buildings {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 
+.building-card {
+  position: relative;
+  width: 90px;
+  height: 130px;
+  background-color: #D2B48C;
+  border-radius: 10px;
+  border: 2px solid #8b5a2b;
+  box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  text-transform: capitalize;
+  cursor: pointer;
+  text-align: center;
+}
 
-/* Your grid stays the same, but we remove its own background */
+.building-card.selected {
+  outline: 4px solid #FF5B61;
+  outline-offset: -2px;
+}
+
+.building-card-header {
+  font-size: 1rem;
+}
+
+/* ========== Middle Section: Game Board and Resource Selector ========== */
+.game-area {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.board-wrapper {
+  width: 340px;
+  height: 340px;
+  background: url('/textures/board.png') no-repeat;
+  background-size: 390px 390px;
+  background-position: -30px -29px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 80px);
-  grid-template-rows:    repeat(4, 80px);
+  grid-template-rows: repeat(4, 80px);
   gap: 4px;
   width: 100%;
   height: 100%;
-  background: none;      /* no more green */
+  background: none;
 }
 
-  
-  
-  
+/* Cells */
 .cell {
   width: 80px;
   height: 80px;
@@ -111,93 +103,115 @@ button, h1, h2, h3, .text-2xl, .font-bold {
   align-items: center;
   border-radius: 6px;
   transition: transform 0.2s;
-  position: relative; /* ✅ this enables child absolute positioning */
+  position: relative;
 }
 
-  
-    
-  
-  
-  .cell.selected {
-    background-color: #FF5B61;
-    transform: scale(1.05);
-  }
-  
-  .bottom-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-  }
-  
-  .resource-shape-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .resource-square-card {
-    width: 60px;
-    height: 60px;
-    border: 1px solid white;
-    border-radius: 5px;
-    background-clip: padding-box;
-    display: block;
-    margin-left: -1px;
-  }  
-  
-  .wheat { background-color: #FFD05A; }
-  .brick { background-color: #FE2133; }
-  .glass { background-color: #4D9A8A; }
-  .stone { background-color: #808080; }
-  .wood  { background-color: #5e2c04; }
-  
-  /* ========== Circles ========== */
-  .circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--circle-color, transparent);
-    z-index: 2;
-  }
-  
-  
-  .cottage-circle   { --circle-color: rgb(77, 154, 138); }
-  .chapel-circle    { --circle-color: rgb(246, 160, 55); }
-  .farm-circle      { --circle-color: rgb(254, 33, 51); }
-  .tavern-circle    { --circle-color: rgb(2, 146, 0); }
-  .well-circle      { --circle-color: rgb(185, 185, 185); }
-  .theater-circle   { --circle-color: rgb(255, 208, 122); }
-  .factory-circle   { --circle-color: rgb(15, 41, 93); }
-  .cathedral-circle { --circle-color: rgb(191, 64, 191); }
-  
-  /* ========== Scoreboard and Leaderboard ========== */
-  .scoreboard {
-    background-color: #c1a478;
-    padding: 1rem;
-    border-radius: 10px;
-    text-align: center;
-    width: 180px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.3);
-    font-weight: bold;
-    color: #2e1f0f;
-  }
-  
-  .scoreboard .section-title {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .scoreboard .resource-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    margin: 0.25rem auto;
-  }
-  
-  /* Tailwind Reset Harmony */
-  .text-white { color: white; }
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.cell.pop {
+  animation: pop 0.2s ease;
+}
+
+@keyframes fade-up {
+  0%   { opacity: 0; transform: translateY(10px); }
+  50%  { opacity: 1; transform: translateY(-2px); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.score-bubble {
+  position: absolute;
+  top: -10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fcd997;
+  animation: fade-up 1s ease forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cell.selected {
+  background-color: #FF5B61;
+  transform: scale(1.05);
+}
+
+.bottom-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.resource-shape-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resource-square-card {
+  width: 60px;
+  height: 60px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-clip: padding-box;
+  display: block;
+  margin-left: -1px;
+}
+
+.wheat { background-color: #FFD05A; }
+.brick { background-color: #FE2133; }
+.glass { background-color: #4D9A8A; }
+.stone { background-color: #808080; }
+.wood  { background-color: #5e2c04; }
+
+/* Circles for buildings */
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--circle-color, transparent);
+  z-index: 2;
+}
+
+.cottage-circle   { --circle-color: rgb(77, 154, 138); }
+.chapel-circle    { --circle-color: rgb(246, 160, 55); }
+.farm-circle      { --circle-color: rgb(254, 33, 51); }
+.tavern-circle    { --circle-color: rgb(2, 146, 0); }
+.well-circle      { --circle-color: rgb(185, 185, 185); }
+.theater-circle   { --circle-color: rgb(255, 208, 122); }
+.factory-circle   { --circle-color: rgb(15, 41, 93); }
+.cathedral-circle { --circle-color: rgb(191, 64, 191); }
+
+/* Scoreboard */
+.scoreboard {
+  background-color: #c1a478;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  width: 180px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  font-weight: bold;
+  color: #2e1f0f;
+}
+
+.scoreboard .section-title {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.scoreboard .resource-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  margin: 0.25rem auto;
+}
+
+/* Tailwind Reset Harmony */
+.text-white { color: white; }

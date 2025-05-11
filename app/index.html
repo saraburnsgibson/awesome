@@ -24,7 +24,7 @@
             if (loginForm) loginForm.style.display = "none";
             appDiv.style.display = "block";
 
-            // ✅ Mount React app *after* login
+            // Mount React app *after* login
             if (!window.reactMounted) {
               import("/src/main.js").then(() => {
                 window.reactMounted = true;

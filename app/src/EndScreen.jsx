@@ -47,7 +47,7 @@ export default function EndScreen() {
           { merge: true }
         );
 
-        console.log("✅ Firestore playedGames incremented.");
+        console.log("Firestore playedGames incremented.");
 
         // Get highest score from user's game history
         const gamesSnapshot = await firebase.firestore()

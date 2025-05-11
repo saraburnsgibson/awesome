@@ -21,6 +21,8 @@ export function TownGrid() {
 
   const [showModal, setShowModal] = useState(false);
   const [factoryIndex, setFactoryIndex] = useState(null);
+  const [placingIdx, setPlacingIdx] = useState(null);      // 🔁 for pop animation
+  const [scoreBubbleIdx, setScoreBubbleIdx] = useState(null); // 🔁 for score bubble
 
   const handlePlace = (idx) => {
     if (selectedBuilding) {
@@ -29,9 +31,17 @@ export function TownGrid() {
         setShowModal(true);
       }
       placeBuilding(idx);
+      setScoreBubbleIdx(idx);
+      setTimeout(() => setScoreBubbleIdx(null), 1000);
     } else {
       const cell = grid[idx];
-      cell.resource ? toggleCell(idx) : placeResource(idx);
+      if (cell.resource) {
+        toggleCell(idx);
+      } else {
+        placeResource(idx);
+        setPlacingIdx(idx);
+        setTimeout(() => setPlacingIdx(null), 200);
+      }
     }
   };
 
@@ -49,11 +59,20 @@ export function TownGrid() {
         {grid.map((cell, idx) => (
           <div
             key={idx}
-            className={`cell${cell?.selected ? ' selected' : ''}`}
+            className={`cell${cell?.selected ? ' selected' : ''}${placingIdx === idx ? ' pop' : ''}`}
             onClick={() => handlePlace(idx)}
           >
+            {scoreBubbleIdx === idx && (
+              <div className="score-bubble">🏡 +3</div>
+            )}
+
             {cell.resource && !cell.topLeft && ['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource) && (
-              <div className={`resource-square-card ${cell.resource}`} />
+              <div className="flex items-center justify-center w-full h-full">
+                <div
+                  className="resource-square-card"
+                  style={{ backgroundColor: getColorForResource(cell.resource) }}
+                />
+              </div>
             )}
             {cell.topLeft && (
               <div className={`circle ${cell.resource}-circle flex items-center justify-center`}>
@@ -73,4 +92,15 @@ export function TownGrid() {
       )}
     </>
   );
+}
+
+function getColorForResource(resource) {
+  switch (resource) {
+    case 'wheat': return '#FFD05A';
+    case 'brick': return '#FE2133';
+    case 'glass': return '#4D9A8A';
+    case 'stone': return '#808080';
+    case 'wood': return '#5e2c04';
+    default: return '#000000';
+  }
 }

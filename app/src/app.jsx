@@ -76,10 +76,11 @@ export function App() {
 
             {/* Sidebar */}
             <div className="w-full lg:w-auto flex flex-col gap-4">
-              <div className="bg-[#d2b48c] text-[#3b2f2f] rounded-xl p-4">
-                <h2 className="text-lg font-bold mb-2">Resources</h2>
-                <ResourceSelector />
-              </div>
+            <div className="bg-[#d2b48c] rounded-xl p-4">
+              <h2 className="text-lg font-bold mb-2 text-white">Resources</h2>
+              <ResourceSelector />
+            </div>
+
 
               <div className="flex justify-between gap-4 mt-4">
                 <button

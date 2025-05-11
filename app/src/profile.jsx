@@ -4,7 +4,7 @@ import './tinytowns.css';
 
 function Profile() {
   const [playedGames, setPlayedGames] = useState(null);
-  const [highestScore, setHighestScore] = useState(0); // ✅ New state
+  const [highestScore, setHighestScore] = useState(0);
   const [userAchievements, setUserAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,7 @@ function Profile() {
         setUserAchievements(achievements);
       }
   
-      // ✅ Fetch games to find highest score
+      // Fetch games to find highest score
       const gamesSnapshot = await firebase.firestore()
         .collection('games')
         .where('uid', '==', uid)
@@ -96,7 +96,7 @@ function Profile() {
                 key={idx}
                 className="flex items-center gap-3 bg-green-100 text-green-800 px-4 py-2 rounded-md shadow font-semibold text-sm"
               >
-                ✅ {ach}
+                {ach}
               </li>
             ))}
           </ul>
