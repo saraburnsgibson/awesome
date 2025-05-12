@@ -28,9 +28,7 @@ export function TownGrid() {
     if (typeof window.isSfxMuted === 'function' && window.isSfxMuted()) return;
     const audio = new Audio(`/audio/${name}.mp3`);
     audio.volume = 0.9;
-    audio.play().catch(err => {
-      console.warn(`⚠️ Could not play sound "${name}":`, err);
-    });
+    audio.play();
   };
 
   const handlePlace = (idx) => {
