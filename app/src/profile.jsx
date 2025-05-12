@@ -6,14 +6,16 @@ function Profile() {
   const [playedGames, setPlayedGames] = useState(null);
   const [highestScore, setHighestScore] = useState(0);
   const [userAchievements, setUserAchievements] = useState([]);
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(true);
 
   const fetchUserData = async (user) => {
     try {
       const uid = user?.uid;
       if (!uid) return;
-  
-      // Get user-level data
+
+      setDisplayName(user.displayName || user.email?.split('@')[0] || 'Your');
+
       const doc = await firebase.firestore().collection('users').doc(uid).get();
       if (doc.exists) {
         const data = doc.data();
@@ -25,13 +27,12 @@ function Profile() {
           : [];
         setUserAchievements(achievements);
       }
-  
-      // Fetch games to find highest score
+
       const gamesSnapshot = await firebase.firestore()
         .collection('games')
         .where('uid', '==', uid)
         .get();
-  
+
       let maxScore = 0;
       gamesSnapshot.forEach(doc => {
         const game = doc.data();
@@ -39,7 +40,7 @@ function Profile() {
           maxScore = game.score;
         }
       });
-  
+
       setHighestScore(maxScore);
     } catch (err) {
       console.error("Error fetching user profile or games:", err);
@@ -77,7 +78,9 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-[#fef9f3] text-[#3b2f2f] flex flex-col items-center justify-start py-10 px-4 font-sans gap-6">
-      <h1 className="text-3xl font-bold">Your Profile</h1>
+      <h1 className="text-3xl font-bold">{displayName}&rsquo;s Profile</h1>
+
+      <img src="/icons/profile.png" alt="Profile" className="w-24 h-24 rounded-full shadow-md" />
 
       <p className="text-lg">
         <strong>Games Played:</strong> {playedGames}
@@ -105,29 +108,28 @@ function Profile() {
         <p className="text-md italic text-gray-600">No achievements earned yet.</p>
       )}
 
-<div className="mt-8 flex flex-row justify-center gap-4">
-  <button
-    onClick={() => window.location.href = '/'}
-    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-  >
-    Back to Game
-  </button>
+      <div className="mt-8 flex flex-row justify-center gap-4">
+        <button
+          onClick={() => window.location.href = '/'}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Back to Game
+        </button>
 
-  <button
-    onClick={() => window.location.href = '/end.html'}
-    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-  >
-    Back to Summary
-  </button>
+        <button
+          onClick={() => window.location.href = '/end.html'}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Back to Summary
+        </button>
 
-  <button
-    onClick={() => window.location.href = '/leaderboard.html'}
-    className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
-  >
-    Leaderboard
-  </button>
-</div>
-
+        <button
+          onClick={() => window.location.href = '/leaderboard.html'}
+          className="bg-[#5c4430] hover:bg-[#3e2d22] text-white py-2 px-6 rounded-md font-semibold"
+        >
+          Leaderboard
+        </button>
+      </div>
     </div>
   );
 }

@@ -22,6 +22,16 @@ export function TownGrid() {
   const [showModal, setShowModal] = useState(false);
   const [factoryIndex, setFactoryIndex] = useState(null);
 
+  const playSound = (name) => {
+    if (typeof window.isSfxMuted === 'function' && window.isSfxMuted()) return;
+    const audio = new Audio(`/audio/${name}.mp3`);
+    audio.volume = 0.9;
+    audio.play().catch(err => {
+      console.warn(`⚠️ Could not play sound "${name}":`, err);
+    });
+  };
+  
+
   const handlePlace = (idx) => {
     if (selectedBuilding) {
       if (selectedBuilding.building === 'factory') {
@@ -29,9 +39,15 @@ export function TownGrid() {
         setShowModal(true);
       }
       placeBuilding(idx);
+      playSound('building'); // 🔊 Play building sound
     } else {
       const cell = grid[idx];
-      cell.resource ? toggleCell(idx) : placeResource(idx);
+      if (!cell.resource) {
+        placeResource(idx);
+        playSound('resource'); // 🔊 Play resource sound
+      } else {
+        toggleCell(idx);
+      }
     }
   };
 
