@@ -108,23 +108,34 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ## 📖 Project Structure
 
 ```plaintext
-public/
-  └── index.html, end.html, firebaseConfig.json
-src/
-  ├── app.jsx
-  ├── end.jsx
-  ├── EndScreen.jsx
-  ├── main.js
-  ├── store.js
-  ├── utils.js
-  ├── BuildingStore.jsx
-  ├── ResourceSelector.jsx
-  ├── TownGrid.jsx
-  └── tinytowns.css
-server.js
-serviceAccountKey.json
-package.json
-README.md
+awesome/
+├── public/
+│   ├── index.html             # Game entry page
+│   ├── end.html               # Game summary page
+│   ├── profile.html           # User profile page
+│   └── firebaseConfig.json    # Firebase credentials for client
+│
+├── src/
+│   ├── app.jsx                # Main game component
+│   ├── end.jsx                # Renders EndScreen or Profile
+│   ├── EndScreen.jsx          # End-of-game summary view
+│   ├── profile.jsx            # Profile component
+│   ├── main.js                # React root renderer
+│   ├── logic.js               # Backend communication helpers
+│   ├── store.js               # Zustand store
+│   ├── utils.js               # Grid pattern helpers
+│   ├── scoring.js             # Game scoring functions
+│   ├── achievements.js        # Achievement logic
+│   ├── BuildingStore.jsx      # Shows eligible buildings
+│   ├── ResourceSelector.jsx   # Bottom resource cards
+│   ├── TownGrid.jsx           # 4x4 grid layout and click logic
+│   ├── FactoryResourceModal.jsx # Modal for setting factory storage
+│   └── tinytowns.css          # Custom + Tailwind CSS
+│
+├── server.js                  # Express backend
+├── serviceAccountKey.json     # Firebase Admin SDK
+├── package.json               # Project metadata and scripts
+└── vite.config.js             # (if using Vite)
 ```
 
 
