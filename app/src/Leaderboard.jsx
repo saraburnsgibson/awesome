@@ -51,7 +51,7 @@ function Leaderboard() {
 
         setTopScores(scores);
 
-        // 🎉 Show banner if top score belongs to current user
+        // Show banner if top score belongs to current user
         if (scores.length > 0 && scores[0].uid === user?.uid) {
           setShowBanner(true);
           setTimeout(() => setShowBanner(false), 2000);

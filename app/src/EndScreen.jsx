@@ -64,7 +64,7 @@ export default function EndScreen() {
         }
     
       } catch (err) {
-        console.error("❌ Failed to save game or update user stats:", err);
+        console.error("Failed to save game or update user stats:", err);
       }
     };    
 
