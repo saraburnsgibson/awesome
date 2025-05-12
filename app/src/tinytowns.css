@@ -113,7 +113,7 @@ h1, h2, .heading {
 }
 
 .cell.pop {
-  animation: pop 0.2s ease;
+  animation: pop 0.8s ease;
 }
 
 @keyframes fade-up {

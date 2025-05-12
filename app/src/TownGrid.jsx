@@ -21,6 +21,8 @@ export function TownGrid() {
 
   const [showModal, setShowModal] = useState(false);
   const [factoryIndex, setFactoryIndex] = useState(null);
+  const [resourceAnimKeys, setResourceAnimKeys] = useState({});
+  const [justPlacedBuildingIndex, setJustPlacedBuildingIndex] = useState(null);
 
   const playSound = (name) => {
     if (typeof window.isSfxMuted === 'function' && window.isSfxMuted()) return;
@@ -30,21 +32,45 @@ export function TownGrid() {
       console.warn(`⚠️ Could not play sound "${name}":`, err);
     });
   };
-  
 
   const handlePlace = (idx) => {
+    const cell = grid[idx];
+
     if (selectedBuilding) {
       if (selectedBuilding.building === 'factory') {
         setFactoryIndex(idx);
         setShowModal(true);
       }
       placeBuilding(idx);
-      playSound('building'); // 🔊 Play building sound
+      playSound('building');
+
+      setTimeout(() => {
+        const updatedGrid = useTownStore.getState().grid;
+        const topLeftIndex = updatedGrid.findIndex(
+          cell => cell.topLeft && cell.resource === selectedBuilding.building
+        );
+        if (topLeftIndex !== -1) {
+          setJustPlacedBuildingIndex(topLeftIndex);
+          setTimeout(() => setJustPlacedBuildingIndex(null), 400);
+        }
+      }, 0);
     } else {
-      const cell = grid[idx];
       if (!cell.resource) {
-        placeResource(idx);
-        playSound('resource'); // 🔊 Play resource sound
+        const key = `pop-${Date.now()}`;
+        setResourceAnimKeys(prev => ({ ...prev, [idx]: key }));
+        playSound('resource');
+
+        setTimeout(() => {
+          placeResource(idx);
+        }, 0);
+
+        setTimeout(() => {
+          setResourceAnimKeys(prev => {
+            const updated = { ...prev };
+            delete updated[idx];
+            return updated;
+          });
+        }, 300);
       } else {
         toggleCell(idx);
       }
@@ -64,15 +90,18 @@ export function TownGrid() {
       <div className="grid">
         {grid.map((cell, idx) => (
           <div
-            key={idx}
+            key={`cell-${idx}`}
             className={`cell${cell?.selected ? ' selected' : ''}`}
             onClick={() => handlePlace(idx)}
           >
             {cell.resource && !cell.topLeft && ['wheat', 'brick', 'glass', 'stone', 'wood'].includes(cell.resource) && (
-              <div className={`resource-square-card ${cell.resource}`} />
+              <div
+                key={resourceAnimKeys[idx] || `res-${idx}`}
+                className={`resource-square-card ${cell.resource} pop`}
+              />
             )}
             {cell.topLeft && (
-              <div className={`circle ${cell.resource}-circle flex items-center justify-center`}>
+              <div className={`circle ${cell.resource}-circle ${justPlacedBuildingIndex === idx ? 'pop' : ''} flex items-center justify-center`}>
                 {cell.building === 'factory' && cell.storedResource && (
                   <span className="text-xs text-white">{cell.storedResource}</span>
                 )}
